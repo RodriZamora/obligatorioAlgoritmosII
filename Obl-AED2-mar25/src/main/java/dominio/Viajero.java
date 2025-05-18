@@ -60,6 +60,11 @@ public class Viajero implements Comparable<Viajero> {
 
     @Override
     public int compareTo(Viajero o) {
-        return 0;
+        return this.cedula.compareTo(o.cedula);
+    }
+
+    @Override
+    public String toString() {
+        return cedula + ";" + nombre + ";" + correo + ";" + edad + ";" + categoria;
     }
 }

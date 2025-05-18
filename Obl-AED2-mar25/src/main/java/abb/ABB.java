@@ -1,8 +1,5 @@
 package abb;
 
-import lista.ILista;
-import lista.Lista;
-
 import java.util.Comparator;
 
 public class ABB<T extends Comparable<T>> {
@@ -34,7 +31,7 @@ public class ABB<T extends Comparable<T>> {
     }
 
     private void insertar(NodoABB<T> nodo, T dato) {
-        if (comparar(nodo.dato, dato) < 0) {
+        if (comparar(dato, nodo.dato) < 0) {
             if (nodo.izq == null) {
                 nodo.izq = new NodoABB<>(dato);
             } else {
@@ -71,18 +68,39 @@ public class ABB<T extends Comparable<T>> {
         if (nodo == null) {
             return null;
         }
-        if (comparar(nodo.dato, viajero) == 0) {
+        if (comparar(viajero, nodo.dato) == 0) {
             return nodo.dato;
         }
-        if (comparar(nodo.dato, viajero) < 0) {
+        if (comparar(viajero, nodo.dato) < 0) {
             return existeRec(nodo.izq, viajero);
         } else {
             return existeRec(nodo.der, viajero);
         }
     }
 
+    public T existeConContador(T viajero, int[] contador) {
+        return existeConContadorRec(raiz, viajero, contador);
+    }
 
-    //Es una buena practica no usar el mismo tipo, no estan obligados a ser la misma.
+    private T existeConContadorRec(NodoABB<T> nodo, T viajero, int[] contador) {
+        if (nodo == null) {
+            return null;
+        }
+
+        contador[0]++;
+
+        if (comparar(viajero, nodo.dato) == 0) {
+            return nodo.dato;
+        }
+        if (comparar(viajero, nodo.dato) < 0) {
+            return existeConContadorRec(nodo.izq, viajero, contador);
+        } else {
+            return existeConContadorRec(nodo.der, viajero, contador);
+        }
+    }
+
+
+
     private class NodoABB<Q> {
         private Q dato;
         private NodoABB<Q> izq;

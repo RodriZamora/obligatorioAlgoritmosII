@@ -59,7 +59,7 @@ public class ImplementacionSistema implements Sistema {
     }
 
     private boolean existeViajeroCorreo(String correo) {
-        Viajero viajero = viajerosCedula.existe(new Viajero(null, null, correo, 0, null));
+        Viajero viajero = viajerosCorreo.existe(new Viajero(null, null, correo, 0, null));
         return viajero != null;
     }
 
@@ -81,12 +81,38 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno buscarViajeroPorCedula(String cedula) {
-        return Retorno.noImplementada();
+        if (cedula == null || cedula.isEmpty()) {
+            return Retorno.error1("La cedula no puede ser nula o vacia");
+        }
+        if (!formatoValidoCedula(cedula)) {
+            return Retorno.error2("El formato de la cedula no es valido");
+        }
+
+        int[] contador = new int[1];
+        Viajero viajero = viajerosCedula.existeConContador(new Viajero(cedula, "", "", 0, null), contador);
+        if (viajero == null) {
+            return Retorno.error3("No existe un viajero registrado con esa cedula");
+        } else {
+            return Retorno.ok(contador[0], viajero.toString());
+        }
     }
 
     @Override
     public Retorno buscarViajeroPorCorreo(String correo) {
-        return Retorno.noImplementada();
+        if(correo == null || correo.isEmpty()){
+            return Retorno.error1("El correo no puede ser nulo o vacio");
+        }
+        if(!validarCorreo(correo)){
+            return Retorno.error2("El formato del correo no es valido");
+        }
+
+        int[] contador = new int[1];
+        Viajero viajero = viajerosCorreo.existeConContador(new Viajero("", "", correo, 0, null), contador);
+        if (viajero == null) {
+            return Retorno.error3("No existe un viajero registrado con ese correo");
+        } else {
+            return Retorno.ok(contador[0], viajero.toString());
+        }
     }
 
     @Override
