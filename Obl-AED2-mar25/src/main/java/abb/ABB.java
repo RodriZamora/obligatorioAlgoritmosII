@@ -99,6 +99,22 @@ public class ABB<T extends Comparable<T>> {
         }
     }
 
+    public String listarAscendente() {
+        String viajerosListados = "";
+        return listarAscendenteRec(raiz, viajerosListados);
+    }
+
+    private String listarAscendenteRec(NodoABB<T> nodo, String viajerosListados) {
+        if (nodo != null) {
+            viajerosListados = listarAscendenteRec(nodo.izq, viajerosListados);
+            if (!viajerosListados.isEmpty()) {
+                viajerosListados += "|";
+            }
+            viajerosListados += nodo.dato.toString();
+            viajerosListados = listarAscendenteRec(nodo.der, viajerosListados);
+        }
+        return viajerosListados;
+    }
 
 
     private class NodoABB<Q> {

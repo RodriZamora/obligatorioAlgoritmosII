@@ -117,7 +117,8 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno listarViajerosPorCedulaAscendente() {
-        return Retorno.noImplementada();
+        String viajerosPorCedula = viajerosCedula.listarAscendente();
+        return Retorno.ok(viajerosPorCedula);
     }
 
     @Override
