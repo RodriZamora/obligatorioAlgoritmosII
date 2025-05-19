@@ -116,6 +116,23 @@ public class ABB<T extends Comparable<T>> {
         return viajerosListados;
     }
 
+    public String listarDescendente() {
+        String viajerosListados = "";
+        return listarDescendenteRec(raiz, viajerosListados);
+    }
+
+    private String listarDescendenteRec(NodoABB<T> nodo, String viajerosListados) {
+        if (nodo != null) {
+            viajerosListados = listarDescendenteRec(nodo.der, viajerosListados);
+            if (!viajerosListados.isEmpty()) {
+                viajerosListados += "|";
+            }
+            viajerosListados += nodo.dato.toString();
+            viajerosListados = listarDescendenteRec(nodo.izq, viajerosListados);
+        }
+        return viajerosListados;
+    }
+
 
     private class NodoABB<Q> {
         private Q dato;
