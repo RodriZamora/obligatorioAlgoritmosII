@@ -99,10 +99,10 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno buscarViajeroPorCorreo(String correo) {
-        if(correo == null || correo.isEmpty()){
+        if (correo == null || correo.isEmpty()) {
             return Retorno.error1("El correo no puede ser nulo o vacio");
         }
-        if(!validarCorreo(correo)){
+        if (!validarCorreo(correo)) {
             return Retorno.error2("El formato del correo no es valido");
         }
 
@@ -129,7 +129,8 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno listarViajerosPorCorreoAscendente() {
-        return Retorno.noImplementada();
+        String viajerosPorCorreo = viajerosCorreo.listarAscendente();
+        return Retorno.ok(viajerosPorCorreo);
     }
 
     @Override
