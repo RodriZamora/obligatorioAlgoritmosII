@@ -115,5 +115,4 @@ public class Test02RegistrarViajero {
         retorno = s.registrarViajero("1.914.689-6", "MaxVerstappen", "guille@ort.edu.uy", 27, Categoria.ESTANDAR);
         assertEquals(Retorno.Resultado.ERROR_6, retorno.getResultado());
     }
-
 }
