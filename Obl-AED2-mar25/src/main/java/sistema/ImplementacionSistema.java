@@ -69,7 +69,7 @@ public class ImplementacionSistema implements Sistema {
     }
 
     private boolean validarCorreo(String correo) {
-        String expresionRegular = "^(?!.*\\.\\.)[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,}$";
+        String expresionRegular = "^(?!.*\\.\\.)[\\w.-]+@[\\w-]+(\\.[\\w-]+)*\\.[a-zA-Z]{2,}$";
         return correo.matches(expresionRegular);
     }
 
