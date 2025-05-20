@@ -25,7 +25,6 @@ public class Test07ListarViajerosPorCorreo {
         s.registrarViajero("1.919.689-5", "CharlesLeclerc", "leclerc@ort.edu.uy", 27, Categoria.FRECUENTE);
         retorno = s.listarViajerosPorCorreoAscendente();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        //assertEquals(3, retorno.getValorInteger());
         assertEquals("1.914.689-5;Guillermo;guille@ort.edu.uy;35;ESTANDAR|" +
                 "1.914.689-6;Hamilton;hamilton@ort.edu.uy;35;PLATINO|" +
                 "1.919.689-5;CharlesLeclerc;leclerc@ort.edu.uy;27;FRECUENTE|" +

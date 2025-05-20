@@ -25,7 +25,6 @@ public class Test06ListarViajerosCedulaDescendente {
         s.registrarViajero("1.919.689-5", "CharlesLeclerc", "leclerc@ort.edu.uy", 27, Categoria.FRECUENTE);
         retorno = s.listarViajerosPorCedulaDescendente();
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        //assertEquals(3, retorno.getValorInteger());
         assertEquals("1.919.689-5;CharlesLeclerc;leclerc@ort.edu.uy;27;FRECUENTE|" +
                 "1.914.689-6;Hamilton;hamilton@ort.edu.uy;35;PLATINO|" +
                 "1.914.689-5;Guillermo;guille@ort.edu.uy;35;ESTANDAR|" +
