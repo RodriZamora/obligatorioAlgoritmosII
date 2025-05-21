@@ -65,17 +65,16 @@ public class ABB<T extends Comparable<T>> {
     }
 
     private T existeRec(NodoABB<T> nodo, T viajero) {
-        if (nodo == null) {
-            return null;
+        if (nodo != null) {
+            if (viajero.equals(nodo.dato)) {
+                return nodo.dato;
+            } else if (viajero.compareTo(nodo.dato) < 0) {
+                return existeRec(nodo.izq, viajero);
+            } else {
+                return existeRec(nodo.der, viajero);
+            }
         }
-        if (comparar(viajero, nodo.dato) == 0) {
-            return nodo.dato;
-        }
-        if (comparar(viajero, nodo.dato) < 0) {
-            return existeRec(nodo.izq, viajero);
-        } else {
-            return existeRec(nodo.der, viajero);
-        }
+        return null;
     }
 
     public T existeConContador(T viajero, int[] contador) {
@@ -83,20 +82,18 @@ public class ABB<T extends Comparable<T>> {
     }
 
     private T existeConContadorRec(NodoABB<T> nodo, T viajero, int[] contador) {
-        if (nodo == null) {
-            return null;
-        }
+        if (nodo != null) {
+            contador[0]++;
 
-        contador[0]++;
-
-        if (comparar(viajero, nodo.dato) == 0) {
-            return nodo.dato;
+            if (viajero.equals(nodo.dato)) {
+                return nodo.dato;
+            } else if (viajero.compareTo(nodo.dato)< 0) {
+                return existeConContadorRec(nodo.izq, viajero, contador);
+            } else {
+                return existeConContadorRec(nodo.der, viajero, contador);
+            }
         }
-        if (comparar(viajero, nodo.dato) < 0) {
-            return existeConContadorRec(nodo.izq, viajero, contador);
-        } else {
-            return existeConContadorRec(nodo.der, viajero, contador);
-        }
+        return null;
     }
 
     public String listarAscendente() {

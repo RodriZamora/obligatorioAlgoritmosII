@@ -1,10 +1,7 @@
 package sistema;
 
 import abb.ABB;
-import dominio.Ciudad;
-import dominio.ComparadorPorCedula;
-import dominio.ComparadorPorCorreo;
-import dominio.Viajero;
+import dominio.*;
 import interfaz.*;
 
 public class ImplementacionSistema implements Sistema {
@@ -12,7 +9,7 @@ public class ImplementacionSistema implements Sistema {
     private int maxCiudades;
     private ABB<Ciudad> ciudades;
     ABB<Viajero> viajerosCedula;
-    ABB<Viajero> viajerosCorreo;// = new ABB<>(new ComparadorPorCorreo());
+    ABB<ViajeroWrapper> viajerosCorreo;
     private boolean sistemaInicializado = false;
 
 
@@ -24,8 +21,8 @@ public class ImplementacionSistema implements Sistema {
 
         this.maxCiudades = maxCiudades;
         this.ciudades = new ABB<>();
-        this.viajerosCedula = new ABB<>(new ComparadorPorCedula());
-        this.viajerosCorreo = new ABB<>(new ComparadorPorCorreo());
+        this.viajerosCedula = new ABB<>();
+        this.viajerosCorreo = new ABB<>();
         this.sistemaInicializado = true;
         return Retorno.ok();
     }
@@ -54,28 +51,9 @@ public class ImplementacionSistema implements Sistema {
 
         Viajero viajero = new Viajero(cedula, nombre, correo, edad, categoria);
         viajerosCedula.insertar(viajero);
-        viajerosCorreo.insertar(viajero);
+        ViajeroWrapper viajeroCorreo = new ViajeroWrapper(viajero);
+        viajerosCorreo.insertar(viajeroCorreo);
         return Retorno.ok();
-    }
-
-    private boolean existeViajeroCorreo(String correo) {
-        Viajero viajero = viajerosCorreo.existe(new Viajero(null, null, correo, 0, null));
-        return viajero != null;
-    }
-
-    private boolean existeViajeroCedula(String cedula) {
-        Viajero viajero = viajerosCedula.existe(new Viajero(cedula, null, null, 0, null));
-        return viajero != null;
-    }
-
-    private boolean validarCorreo(String correo) {
-        String expresionRegular = "^(?!.*\\.\\.)[\\w.-]+@[\\w-]+(\\.[\\w-]+)*\\.[a-zA-Z]{2,}$";
-        return correo.matches(expresionRegular);
-    }
-
-    private boolean formatoValidoCedula(String cedula) {
-        String expresionRegular = "^(\\d\\.\\d{3}\\.\\d{3}-\\d|\\d{3}\\.\\d{3}-\\d)$";
-        return cedula.matches(expresionRegular);
     }
 
 
@@ -107,7 +85,8 @@ public class ImplementacionSistema implements Sistema {
         }
 
         int[] contador = new int[1];
-        Viajero viajero = viajerosCorreo.existeConContador(new Viajero("", "", correo, 0, null), contador);
+        ViajeroWrapper viajeroBuscado = new ViajeroWrapper(correo);
+        ViajeroWrapper viajero = viajerosCorreo.existeConContador(viajeroBuscado, contador);
         if (viajero == null) {
             return Retorno.error3("No existe un viajero registrado con ese correo");
         } else {
@@ -176,6 +155,30 @@ public class ImplementacionSistema implements Sistema {
     @Override
     public Retorno viajeCostoMinimoDolares(String codigoCiudadOrigen, String codigoCiudadDestino, TipoVueloPermitido tipoVueloPermitido) {
         return Retorno.noImplementada();
+    }
+
+
+    /// METODOS PRIVADOS AUXILIARES//////////
+
+    private boolean existeViajeroCorreo(String correo) {
+        ViajeroWrapper viajeroBuscado = new ViajeroWrapper(correo);
+        ViajeroWrapper viajero = viajerosCorreo.existe(viajeroBuscado);
+        return viajero != null;
+    }
+
+    private boolean existeViajeroCedula(String cedula) {
+        Viajero viajero = viajerosCedula.existe(new Viajero(cedula, null, null, 0, null));
+        return viajero != null;
+    }
+
+    private boolean validarCorreo(String correo) {
+        String expresionRegular = "^(?!.*\\.\\.)[\\w.-]+@[\\w-]+(\\.[\\w-]+)*\\.[a-zA-Z]{2,}$";
+        return correo.matches(expresionRegular);
+    }
+
+    private boolean formatoValidoCedula(String cedula) {
+        String expresionRegular = "^(\\d\\.\\d{3}\\.\\d{3}-\\d|\\d{3}\\.\\d{3}-\\d)$";
+        return cedula.matches(expresionRegular);
     }
 
 }

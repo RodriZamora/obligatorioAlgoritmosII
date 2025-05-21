@@ -2,6 +2,8 @@ package dominio;
 
 import interfaz.Categoria;
 
+import java.util.Objects;
+
 public class Viajero implements Comparable<Viajero> {
     private String cedula;
     private String nombre;
@@ -15,6 +17,10 @@ public class Viajero implements Comparable<Viajero> {
         this.correo = correo;
         this.edad = edad;
         this.categoria = categoria;
+    }
+
+    public Viajero(String correo){
+        this.correo = correo;
     }
 
     public String getCedula() {
@@ -57,6 +63,17 @@ public class Viajero implements Comparable<Viajero> {
         this.categoria = categoria;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Viajero viajero = (Viajero) o;
+        return Objects.equals(cedula, viajero.cedula);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(cedula);
+    }
 
     @Override
     public int compareTo(Viajero o) {
