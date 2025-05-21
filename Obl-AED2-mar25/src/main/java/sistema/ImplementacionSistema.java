@@ -10,6 +10,9 @@ public class ImplementacionSistema implements Sistema {
     private ABB<Ciudad> ciudades;
     ABB<Viajero> viajerosCedula;
     ABB<ViajeroWrapper> viajerosCorreo;
+    ABB<Viajero> viajerosPlatinos;
+    ABB<Viajero> viajerosEstandar;
+    ABB<Viajero> viajerosFrecuentes;
     private boolean sistemaInicializado = false;
 
 
@@ -23,7 +26,11 @@ public class ImplementacionSistema implements Sistema {
         this.ciudades = new ABB<>();
         this.viajerosCedula = new ABB<>();
         this.viajerosCorreo = new ABB<>();
+        this.viajerosEstandar = new ABB<>();
+        this.viajerosFrecuentes = new ABB<>();
+        this.viajerosPlatinos = new ABB<>();
         this.sistemaInicializado = true;
+
         return Retorno.ok();
     }
 
@@ -53,6 +60,7 @@ public class ImplementacionSistema implements Sistema {
         viajerosCedula.insertar(viajero);
         ViajeroWrapper viajeroCorreo = new ViajeroWrapper(viajero);
         viajerosCorreo.insertar(viajeroCorreo);
+        insertarSegunCategoria(viajero);
         return Retorno.ok();
     }
 
@@ -114,7 +122,20 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno listarViajerosPorCategoria(Categoria unaCategoria) {
-        return Retorno.noImplementada();
+        switch (unaCategoria){
+            case ESTANDAR -> {
+                return Retorno.ok(viajerosEstandar.listarAscendente());
+            }
+            case FRECUENTE -> {
+                return Retorno.ok(viajerosFrecuentes.listarAscendente());
+            }
+            case PLATINO -> {
+                return Retorno.ok(viajerosPlatinos.listarAscendente());
+            }
+            default -> {
+                return Retorno.noImplementada();
+            }
+        }
     }
 
     @Override
@@ -179,6 +200,20 @@ public class ImplementacionSistema implements Sistema {
     private boolean formatoValidoCedula(String cedula) {
         String expresionRegular = "^(\\d\\.\\d{3}\\.\\d{3}-\\d|\\d{3}\\.\\d{3}-\\d)$";
         return cedula.matches(expresionRegular);
+    }
+
+    private void insertarSegunCategoria(Viajero viajero) {
+        switch (viajero.getCategoria()) {
+            case ESTANDAR:
+                viajerosEstandar.insertar(viajero);
+                break;
+            case FRECUENTE:
+                viajerosFrecuentes.insertar(viajero);
+                break;
+            case PLATINO:
+                viajerosPlatinos.insertar(viajero);
+                break;
+        }
     }
 
 }
