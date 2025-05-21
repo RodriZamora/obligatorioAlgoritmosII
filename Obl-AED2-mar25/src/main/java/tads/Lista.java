@@ -1,4 +1,4 @@
-package lista;
+package tads;
 
 
 import java.util.Iterator;
