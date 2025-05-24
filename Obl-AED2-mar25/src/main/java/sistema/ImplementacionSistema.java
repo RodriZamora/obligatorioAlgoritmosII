@@ -201,9 +201,10 @@ public class ImplementacionSistema implements Sistema {
         if (ciudades.cantidadVertices() >= maxCiudades) {
             return Retorno.error1("Ya se alcanzó el máximo de ciudades registradas");
         }
-        if (codigo == null || codigo.isEmpty() || nombre == null || nombre.isEmpty()) {
+        if (codigo == null || codigo.trim().isEmpty() || nombre == null || nombre.trim().isEmpty()) {
             return Retorno.error2("Los campos no pueden ser nulos o vacios");
         }
+
         if (existeCiudad(codigo)) {
             return Retorno.error3("Ya existe una ciudad registrada con ese código");
         }
@@ -229,6 +230,7 @@ public class ImplementacionSistema implements Sistema {
         if (!existeCiudad(codigoCiudadDestino)) {
             return Retorno.error3("No existe la ciudad de destino");
         }
+
         Vertice vOrigen = new Vertice(codigoCiudadOrigen);
         Vertice vDestino = new Vertice(codigoCiudadDestino);
         if (ciudades.obtenerArista(vOrigen, vDestino) != null) {
@@ -240,7 +242,31 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno registrarVuelo(String codigoCiudadOrigen, String codigoCiudadDestino, String codigoDeVuelo, double combustible, double minutos, double costoEnDolares, TipoVuelo tipoDeVuelo) {
-        return Retorno.noImplementada();
+        if (combustible <= 0 || minutos <= 0 || costoEnDolares <= 0) {
+            return Retorno.error1("Los datos de combustible, minutos y costo en dolares no pueden ser menores o iguales a 0");
+        }
+        if (codigoCiudadOrigen == null || codigoCiudadDestino == null || codigoDeVuelo == null || codigoCiudadOrigen.isEmpty() || codigoCiudadDestino.isEmpty() || codigoDeVuelo.isEmpty()) {
+            return Retorno.error2("Los campos no pueden ser nulos o vacios");
+        }
+        if (!existeCiudad(codigoCiudadOrigen)) {
+            return Retorno.error3("No existe la ciudad de origen");
+        }
+        if (!existeCiudad(codigoCiudadDestino)) {
+            return Retorno.error4("No existe la ciudad de destino");
+        }
+        Vertice vOrigen = new Vertice(codigoCiudadOrigen);
+        Vertice vDestino = new Vertice(codigoCiudadDestino);
+        Arista arista = ciudades.obtenerArista(vOrigen, vDestino);
+        if (arista == null) {
+            return Retorno.error5("No existe una conexion entre esas ciudades");
+        }
+        /*if(arista.existeVuelo(codigoDeVuelo)){
+            return Retorno.error6("Ya existe un vuelo registrado con ese codigo para esas ciudades");
+        }*/
+
+        Vuelo vuelo = new Vuelo(codigoCiudadOrigen, codigoCiudadDestino, codigoDeVuelo, combustible, minutos, costoEnDolares, tipoDeVuelo);
+        arista.agregarVuelo(vuelo);
+        return Retorno.ok();
     }
 
     @Override

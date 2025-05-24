@@ -51,15 +51,15 @@ public class Grafo {
         vertices[posVertice] = null;
         cantidad--;
 
-        for (int i = 1; i < aristas.length; i++) {
+        for (int i = 0; i < aristas.length; i++) {
             aristas[posVertice][i].setExiste(false);  //Borro aristas adyacentes
             aristas[i][posVertice].setExiste(false); //Borro aristas incidentes
         }
     }
 
-    public boolean existe(Vertice v){
-        for(int i = 0; i < vertices.length; i++){
-            if(vertices[i] != null && vertices[i].equals(v)){
+    public boolean existe(Vertice v) {
+        for (int i = 0; i < vertices.length; i++) {
+            if (vertices[i] != null && vertices[i].equals(v)) {
                 return true;
             }
         }
@@ -84,6 +84,13 @@ public class Grafo {
         int posVfinal = obtenerPos(vFinal);
 
         aristas[posVinicial][posVfinal].setExiste(false);
+    }
+
+    public Arista obtenerArista(Vertice vInicio, Vertice vFinal) {
+        int posVinicial = obtenerPos(vInicio);
+        int posVfinal = obtenerPos(vFinal);
+
+        return aristas[posVinicial][posVfinal];
     }
 
 
@@ -128,17 +135,10 @@ public class Grafo {
     }
 
 
-    public Arista obtenerArista(Vertice vInicio, Vertice vFinal) {
-        int posVinicial = obtenerPos(vInicio);
-        int posVfinal = obtenerPos(vFinal);
-
-        return aristas[posVinicial][posVfinal];
-    }
-
     public ILista<Vertice> adyacentes(Vertice vertice) {
         int pos = obtenerPos(vertice);
         ILista<Vertice> adyacentes = new Lista<>();
-        for (int i = 1; i < aristas.length; i++) {
+        for (int i = 0; i < aristas.length; i++) {
             if (aristas[pos][i].getExiste()) {
                 adyacentes.insertar(vertices[i]);
             }
@@ -165,7 +165,6 @@ public class Grafo {
         }
         return -1; // No se encontró el vértice
     }
-
 
 
 }

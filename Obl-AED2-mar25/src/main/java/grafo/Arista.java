@@ -1,5 +1,7 @@
 package grafo;
 
+import dominio.Vuelo;
+
 public class Arista {
     private String peso;
     private Boolean existe;
@@ -10,7 +12,7 @@ public class Arista {
     }
 
     public Arista() {
-
+        this.existe = false;
     }
 
     public void setExiste(Boolean existe) {
@@ -27,5 +29,12 @@ public class Arista {
 
     public void setPeso(String peso) {
         this.peso = peso;
+    }
+
+    /*public boolean existeVuelo(String codigoDeVuelo) {
+
+    }*/
+
+    public void agregarVuelo(Vuelo vuelo) {
     }
 }
