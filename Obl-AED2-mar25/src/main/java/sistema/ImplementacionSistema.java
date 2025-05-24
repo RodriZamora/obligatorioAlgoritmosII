@@ -2,6 +2,7 @@ package sistema;
 
 import abb.ABB;
 import dominio.*;
+import grafo.Arista;
 import grafo.Grafo;
 import grafo.Vertice;
 import interfaz.*;
@@ -216,11 +217,25 @@ public class ImplementacionSistema implements Sistema {
     }
 
 
-
-
     @Override
     public Retorno registrarConexion(String codigoCiudadOrigen, String codigoCiudadDestino) {
-        return Retorno.noImplementada();
+        if (codigoCiudadOrigen == null || codigoCiudadDestino == null || codigoCiudadOrigen.isEmpty() || codigoCiudadDestino.isEmpty()) {
+            return Retorno.error1("Los campos no pueden ser nulos o vacios");
+        }
+
+        if (!existeCiudad(codigoCiudadOrigen)) {
+            return Retorno.error2("No existe la ciudad de origen");
+        }
+        if (!existeCiudad(codigoCiudadDestino)) {
+            return Retorno.error3("No existe la ciudad de destino");
+        }
+        Vertice vOrigen = new Vertice(codigoCiudadOrigen);
+        Vertice vDestino = new Vertice(codigoCiudadDestino);
+        if (ciudades.obtenerArista(vOrigen, vDestino) != null) {
+            return Retorno.error4("Ya existe una conexion entre esas ciudades");
+        }
+        ciudades.agregarArista(vOrigen, vDestino, new Arista());
+        return Retorno.ok();
     }
 
     @Override

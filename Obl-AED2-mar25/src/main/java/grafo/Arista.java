@@ -6,12 +6,12 @@ public class Arista {
 
     public Arista(String peso) {
         this.peso = peso;
+        this.existe = true;
     }
 
     public Arista() {
 
     }
-
 
     public void setExiste(Boolean existe) {
         this.existe = existe;
