@@ -1,5 +1,6 @@
 package grafo;
 
+import dominio.Ciudad;
 import tads.Cola;
 import tads.ICola;
 import tads.ILista;
@@ -54,6 +55,19 @@ public class Grafo {
             aristas[posVertice][i].setExiste(false);  //Borro aristas adyacentes
             aristas[i][posVertice].setExiste(false); //Borro aristas incidentes
         }
+    }
+
+    public boolean existe(Vertice v){
+        for(int i = 0; i < vertices.length; i++){
+            if(vertices[i] != null && vertices[i].equals(v)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public int cantidadVertices() {
+        return cantidad;
     }
 
     public void agregarArista(Vertice vInicio, Vertice vFinal, Arista arista) {
@@ -151,4 +165,7 @@ public class Grafo {
         }
         return -1; // No se encontró el vértice
     }
+
+
+
 }

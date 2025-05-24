@@ -87,7 +87,7 @@ public class ABB<T extends Comparable<T>> {
 
             if (viajero.equals(nodo.dato)) {
                 return nodo.dato;
-            } else if (viajero.compareTo(nodo.dato)< 0) {
+            } else if (viajero.compareTo(nodo.dato) < 0) {
                 return existeConContadorRec(nodo.izq, viajero, contador);
             } else {
                 return existeConContadorRec(nodo.der, viajero, contador);
@@ -129,6 +129,7 @@ public class ABB<T extends Comparable<T>> {
         }
         return viajerosListados;
     }
+
 
 
     private class NodoABB<Q> {

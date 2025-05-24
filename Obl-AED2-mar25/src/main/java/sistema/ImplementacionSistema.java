@@ -2,18 +2,20 @@ package sistema;
 
 import abb.ABB;
 import dominio.*;
+import grafo.Grafo;
+import grafo.Vertice;
 import interfaz.*;
 
 public class ImplementacionSistema implements Sistema {
 
     private int maxCiudades;
-    private ABB<Ciudad> ciudades;
+    //private ABB<Ciudad> ciudades;
     private ABB<Viajero> viajerosCedula;
     private ABB<ViajeroWrapper> viajerosCorreo;
     private ABB<Viajero> viajerosPlatinos;
     private ABB<Viajero> viajerosEstandar;
     private ABB<Viajero> viajerosFrecuentes;
-    private ABB<Viajero> viajeroRango0;
+    /*private ABB<Viajero> viajeroRango0;
     private ABB<Viajero> viajeroRango1;
     private ABB<Viajero> viajeroRango2;
     private ABB<Viajero> viajeroRango3;
@@ -26,7 +28,11 @@ public class ImplementacionSistema implements Sistema {
     private ABB<Viajero> viajeroRango10;
     private ABB<Viajero> viajeroRango11;
     private ABB<Viajero> viajeroRango12;
-    private ABB<Viajero> viajeroRango13;
+    private ABB<Viajero> viajeroRango13;*/
+    private ABB<Viajero>[] viajerosPorRango = new ABB[14];
+
+    private Grafo ciudades;
+
 
     private boolean sistemaInicializado = false;
 
@@ -38,14 +44,13 @@ public class ImplementacionSistema implements Sistema {
         }
 
         this.maxCiudades = maxCiudades;
-        this.ciudades = new ABB<>();
         this.viajerosCedula = new ABB<>();
         this.viajerosCorreo = new ABB<>();
         this.viajerosEstandar = new ABB<>();
         this.viajerosFrecuentes = new ABB<>();
         this.viajerosPlatinos = new ABB<>();
         this.sistemaInicializado = true;
-        this.viajeroRango0 = new ABB<>();
+        /*this.viajeroRango0 = new ABB<>();
         this.viajeroRango1 = new ABB<>();
         this.viajeroRango2 = new ABB<>();
         this.viajeroRango3 = new ABB<>();
@@ -58,7 +63,12 @@ public class ImplementacionSistema implements Sistema {
         this.viajeroRango10 = new ABB<>();
         this.viajeroRango11 = new ABB<>();
         this.viajeroRango12 = new ABB<>();
-        this.viajeroRango13 = new ABB<>();
+        this.viajeroRango13 = new ABB<>();*/
+        for (int i = 0; i < 14; i++) {
+            viajerosPorRango[i] = new ABB<>();
+        }
+
+        this.ciudades = new Grafo(maxCiudades, true);
 
         return Retorno.ok();
     }
@@ -87,9 +97,11 @@ public class ImplementacionSistema implements Sistema {
 
         Viajero viajero = new Viajero(cedula, nombre, correo, edad, categoria);
         viajerosCedula.insertar(viajero);
+        insertarSegunCategoria(viajero);
+
         ViajeroWrapper viajeroCorreo = new ViajeroWrapper(viajero);
         viajerosCorreo.insertar(viajeroCorreo);
-        insertarSegunCategoria(viajero);
+
         int rango = obtenerRangoEdad(edad);
         obtenerAbbRango(rango).insertar(viajero);
         return Retorno.ok();
@@ -185,8 +197,26 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno registrarCiudad(String codigo, String nombre) {
-        return Retorno.noImplementada();
+        if (ciudades.cantidadVertices() >= maxCiudades) {
+            return Retorno.error1("Ya se alcanzó el máximo de ciudades registradas");
+        }
+        if (codigo == null || codigo.isEmpty() || nombre == null || nombre.isEmpty()) {
+            return Retorno.error2("Los campos no pueden ser nulos o vacios");
+        }
+        if (existeCiudad(codigo)) {
+            return Retorno.error3("Ya existe una ciudad registrada con ese código");
+        }
+
+        Ciudad ciudad = new Ciudad(codigo, nombre);
+        Vertice vertice = new Vertice(ciudad.getCodigo());
+        ciudades.agregarVertice(vertice);
+        return Retorno.ok();
+
+
     }
+
+
+
 
     @Override
     public Retorno registrarConexion(String codigoCiudadOrigen, String codigoCiudadDestino) {
@@ -257,42 +287,16 @@ public class ImplementacionSistema implements Sistema {
     }
 
     private ABB<Viajero> obtenerAbbRango(int rango) {
-        switch (rango) {
-            case 0:
-                return viajeroRango0;
-            case 1:
-                return viajeroRango1;
-            case 2:
-                return viajeroRango2;
-            case 3:
-                return viajeroRango3;
-            case 4:
-                return viajeroRango4;
-            case 5:
-                return viajeroRango5;
-            case 6:
-                return viajeroRango6;
-            case 7:
-                return viajeroRango7;
-            case 8:
-                return viajeroRango8;
-            case 9:
-                return viajeroRango9;
-            case 10:
-                return viajeroRango10;
-            case 11:
-                return viajeroRango11;
-            case 12:
-                return viajeroRango12;
-            case 13:
-                return viajeroRango13;
-            default:
-                return null;
-        }
+        return viajerosPorRango[rango];
     }
 
     private int obtenerRangoEdad(int edad) {
         return edad / 10;
+    }
+
+    private boolean existeCiudad(String codigo) {
+        Vertice v = new Vertice(codigo);
+        return ciudades.existe(v);
     }
 
 }
