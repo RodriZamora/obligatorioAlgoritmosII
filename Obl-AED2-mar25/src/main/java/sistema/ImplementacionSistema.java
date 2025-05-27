@@ -76,7 +76,7 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno registrarViajero(String cedula, String nombre, String correo, int edad, Categoria categoria) {
-        if (cedula == null || cedula.isEmpty() || nombre == null || nombre.isEmpty() || correo == null || correo.isEmpty() || categoria == null) {
+        if (cedula == null || cedula.trim().isEmpty() || nombre == null || nombre.trim().isEmpty() || correo == null || correo.isEmpty() || categoria == null) {
             return Retorno.error1("Los campos no pueden ser nulos o vacios");
         }
         if (!formatoValidoCedula(cedula)) {
@@ -89,14 +89,17 @@ public class ImplementacionSistema implements Sistema {
         if (edad < 0 || edad > 139) {
             return Retorno.error4("La edad no es valida");
         }
-        if (existeViajeroCedula(cedula)) {
+
+        int cedulaSanitizada = sanitizarCedula(cedula);
+
+        if (existeViajeroCedula(cedulaSanitizada)) {
             return Retorno.error5("Ya existe un viajero con esa cédula");
         }
         if (existeViajeroCorreo(correo)) {
             return Retorno.error6("Ya existe un viajero con ese correo");
         }
 
-        Viajero viajero = new Viajero(cedula, nombre, correo, edad, categoria);
+        Viajero viajero = new Viajero(cedula, cedulaSanitizada, nombre, correo, edad, categoria);
         viajerosCedula.insertar(viajero);
         insertarSegunCategoria(viajero);
 
@@ -111,15 +114,16 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno buscarViajeroPorCedula(String cedula) {
-        if (cedula == null || cedula.isEmpty()) {
+        if (cedula == null || cedula.trim().isEmpty()) {
             return Retorno.error1("La cedula no puede ser nula o vacia");
         }
         if (!formatoValidoCedula(cedula)) {
             return Retorno.error2("El formato de la cedula no es valido");
         }
 
+        int cedulaSanitizada = sanitizarCedula(cedula);
         int[] contador = new int[1];
-        Viajero viajero = viajerosCedula.existeConContador(new Viajero(cedula, "", "", 0, null), contador);
+        Viajero viajero = viajerosCedula.existeConContador(new Viajero(cedulaSanitizada), contador);
         if (viajero == null) {
             return Retorno.error3("No existe un viajero registrado con esa cedula");
         } else {
@@ -129,7 +133,7 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno buscarViajeroPorCorreo(String correo) {
-        if (correo == null || correo.isEmpty()) {
+        if (correo == null || correo.trim().isEmpty()) {
             return Retorno.error1("El correo no puede ser nulo o vacio");
         }
         if (!validarCorreo(correo)) {
@@ -292,14 +296,18 @@ public class ImplementacionSistema implements Sistema {
 
     /// METODOS PRIVADOS AUXILIARES//////////
 
+    private int sanitizarCedula(String cedula) {
+        return Integer.parseInt(cedula.replaceAll("[.-]", ""));
+    }
+
     private boolean existeViajeroCorreo(String correo) {
         ViajeroWrapper viajeroBuscado = new ViajeroWrapper(correo);
         ViajeroWrapper viajero = viajerosCorreo.existe(viajeroBuscado);
         return viajero != null;
     }
 
-    private boolean existeViajeroCedula(String cedula) {
-        Viajero viajero = viajerosCedula.existe(new Viajero(cedula, null, null, 0, null));
+    private boolean existeViajeroCedula(int cedula) {
+        Viajero viajero = viajerosCedula.existe(new Viajero(cedula));
         return viajero != null;
     }
 

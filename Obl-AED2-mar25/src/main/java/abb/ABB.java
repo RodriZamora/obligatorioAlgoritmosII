@@ -31,7 +31,7 @@ public class ABB<T extends Comparable<T>> {
     }
 
     private void insertar(NodoABB<T> nodo, T dato) {
-        if (comparar(dato, nodo.dato) < 0) {
+        if (dato.compareTo(nodo.dato) < 0) {
             if (nodo.izq == null) {
                 nodo.izq = new NodoABB<>(dato);
             } else {
@@ -129,7 +129,6 @@ public class ABB<T extends Comparable<T>> {
         }
         return viajerosListados;
     }
-
 
 
     private class NodoABB<Q> {
