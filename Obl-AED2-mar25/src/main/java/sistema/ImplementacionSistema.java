@@ -217,8 +217,6 @@ public class ImplementacionSistema implements Sistema {
         Ciudades ciudades = new Ciudades(ciudad.getCodigo());
         this.ciudades.agregarVertice(ciudades);
         return Retorno.ok();
-
-
     }
 
 
@@ -251,7 +249,7 @@ public class ImplementacionSistema implements Sistema {
         if (combustible <= 0 || minutos <= 0 || costoEnDolares <= 0) {
             return Retorno.error1("Los datos de combustible, minutos y costo en dolares no pueden ser menores o iguales a 0");
         }
-        if (codigoCiudadOrigen == null || codigoCiudadDestino == null || codigoDeVuelo == null || codigoCiudadOrigen.trim().isEmpty() || codigoCiudadDestino.trim().isEmpty() || codigoDeVuelo.trim().isEmpty()) {
+        if (codigoCiudadOrigen == null || codigoCiudadDestino == null || codigoDeVuelo == null || tipoDeVuelo == null || codigoCiudadOrigen.trim().isEmpty() || codigoCiudadDestino.trim().isEmpty() || codigoDeVuelo.trim().isEmpty() || tipoDeVuelo.getTexto().trim().isEmpty()) {
             return Retorno.error2("Los campos no pueden ser nulos o vacios");
         }
         if (!existeCiudad(codigoCiudadOrigen)) {
@@ -262,8 +260,8 @@ public class ImplementacionSistema implements Sistema {
         }
         Ciudades vOrigen = new Ciudades(codigoCiudadOrigen);
         Ciudades vDestino = new Ciudades(codigoCiudadDestino);
-        Conexion conexion = ciudades.obtenerArista(vOrigen, vDestino);
-        if (conexion.getExiste()) {
+        //Conexion conexion = ciudades.existeArista(vOrigen, vDestino);
+        if (!ciudades.existeArista(vOrigen, vDestino)) {
             return Retorno.error5("No existe una conexion entre esas ciudades");
         }
 
@@ -271,14 +269,12 @@ public class ImplementacionSistema implements Sistema {
             return Retorno.error6("Ya existe un vuelo con ese código en esa conexión");
         }
 
+        Conexion conexion = ciudades.obtenerArista(vOrigen, vDestino);
         Vuelo vuelo = new Vuelo(codigoCiudadOrigen, codigoCiudadDestino, codigoDeVuelo, combustible, minutos, costoEnDolares, tipoDeVuelo);
-
+        conexion.agregarVuelo(vuelo);
         return Retorno.ok();
     }
 
-    private boolean existeVueloEnConexion(String codigoCiudadOrigen, String codigoCiudadDestino, String codigoDeVuelo) {
-        return true;
-    }
 
     @Override
     public Retorno actualizarVuelo(String codigoCiudadOrigen, String codigoCiudadDestino, String codigoDeVuelo, double combustible, double minutos, double costoEnDolares, TipoVuelo tipoDeVuelo) {
@@ -354,6 +350,14 @@ public class ImplementacionSistema implements Sistema {
     private boolean existeCiudad(String codigo) {
         Ciudades v = new Ciudades(codigo);
         return ciudades.existe(v);
+    }
+
+    private boolean existeVueloEnConexion(String codigoCiudadOrigen, String codigoCiudadDestino, String codigoDeVuelo) {
+        Ciudades vOrigen = new Ciudades(codigoCiudadOrigen);
+        Ciudades vDestino = new Ciudades(codigoCiudadDestino);
+
+        Conexion conexion = ciudades.obtenerArista(vOrigen, vDestino);
+        return conexion.existeVuelo(codigoDeVuelo);
     }
 
 }

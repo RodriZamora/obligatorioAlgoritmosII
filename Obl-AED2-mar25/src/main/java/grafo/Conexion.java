@@ -19,4 +19,18 @@ public class Conexion {
     public Boolean getExiste() {
         return existe;
     }
+
+    public void agregarVuelo(Vuelo vuelo) {
+        vuelos.insertar(vuelo);
+    }
+
+    public boolean existeVuelo(String codigoDeVuelo) {
+        boolean existeVuelo = false;
+        for (Vuelo vuelo : vuelos) {
+            if (vuelo.getCodigoDeVuelo().equals(codigoDeVuelo)) {
+                existeVuelo = true;
+            }
+        }
+        return existeVuelo;
+    }
 }
