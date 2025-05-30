@@ -1,14 +1,13 @@
 package grafo;
 
-import dominio.Ciudad;
 import tads.Cola;
 import tads.ICola;
 import tads.ILista;
 import tads.Lista;
 
 public class Grafo {
-    private Arista[][] aristas;
-    private Vertice[] vertices;
+    private Conexion[][] conexiones;
+    private Ciudades[] vertices;
     private int cantidad;
     private final int maxVertices;
     private final boolean dirigido;
@@ -16,20 +15,20 @@ public class Grafo {
 
     public Grafo(int cantMaxVertices, boolean esDirigido) {
         cantidad = 0;
-        vertices = new Vertice[cantMaxVertices];
-        aristas = new Arista[cantMaxVertices][cantMaxVertices];
+        vertices = new Ciudades[cantMaxVertices];
+        conexiones = new Conexion[cantMaxVertices][cantMaxVertices];
         if (esDirigido) {
-            for (int i = 0; i < aristas.length; i++) {
-                for (int j = 0; j < aristas.length; j++) {
-                    aristas[i][j] = new Arista();
+            for (int i = 0; i < conexiones.length; i++) {
+                for (int j = 0; j < conexiones.length; j++) {
+                    conexiones[i][j] = new Conexion();
                 }
             }
         } else {
-            for (int i = 0; i < aristas.length; i++) {
-                for (int j = i; j < aristas.length; j++) {
-                    Arista arista = new Arista();
-                    aristas[i][j] = arista;
-                    aristas[j][i] = arista; // Asignar la misma arista en ambas direcciones
+            for (int i = 0; i < conexiones.length; i++) {
+                for (int j = i; j < conexiones.length; j++) {
+                    Conexion conexion = new Conexion();
+                    conexiones[i][j] = conexion;
+                    conexiones[j][i] = conexion; // Asignar la misma arista en ambas direcciones
                 }
             }
         }
@@ -37,27 +36,27 @@ public class Grafo {
         dirigido = esDirigido;
     }
 
-    public void agregarVertice(Vertice vertice) {
+    public void agregarVertice(Ciudades ciudades) {
 
         if (cantidad < maxVertices) {
             int posLibre = obtenerPosLibre();
-            vertices[posLibre] = vertice;
+            vertices[posLibre] = ciudades;
             cantidad++;
         }
     }
 
-    public void borrarVertice(Vertice v) {
+    public void borrarVertice(Ciudades v) {
         int posVertice = obtenerPos(v);
         vertices[posVertice] = null;
         cantidad--;
 
-        for (int i = 0; i < aristas.length; i++) {
-            aristas[posVertice][i].setExiste(false);  //Borro aristas adyacentes
-            aristas[i][posVertice].setExiste(false); //Borro aristas incidentes
+        for (int i = 0; i < conexiones.length; i++) {
+            conexiones[posVertice][i].setExiste(false);  //Borro aristas adyacentes
+            conexiones[i][posVertice].setExiste(false); //Borro aristas incidentes
         }
     }
 
-    public boolean existe(Vertice v) {
+    public boolean existe(Ciudades v) {
         for (int i = 0; i < vertices.length; i++) {
             if (vertices[i] != null && vertices[i].equals(v)) {
                 return true;
@@ -70,33 +69,37 @@ public class Grafo {
         return cantidad;
     }
 
-    public void agregarArista(Vertice vInicio, Vertice vFinal, Arista arista) {
+    public void agregarConexion(Ciudades vInicio, Ciudades vFinal, Conexion conexion) {
         int posVinicial = obtenerPos(vInicio);
         int posVfinal = obtenerPos(vFinal);
-        Arista a = aristas[posVinicial][posVfinal];
+        Conexion a = conexiones[posVinicial][posVfinal];
         a.setExiste(true);
-        a.setPeso(arista.getPeso());
-
     }
 
-    public void borrarArista(Vertice vInicio, Vertice vFinal) {
+    public void borrarArista(Ciudades vInicio, Ciudades vFinal) {
         int posVinicial = obtenerPos(vInicio);
         int posVfinal = obtenerPos(vFinal);
 
-        aristas[posVinicial][posVfinal].setExiste(false);
+        conexiones[posVinicial][posVfinal].setExiste(false);
     }
 
-    public Arista obtenerArista(Vertice vInicio, Vertice vFinal) {
+    public Conexion obtenerArista(Ciudades vInicio, Ciudades vFinal) {
         int posVinicial = obtenerPos(vInicio);
         int posVfinal = obtenerPos(vFinal);
+        return conexiones[posVinicial][posVfinal];
+    }
 
-        return aristas[posVinicial][posVfinal];
+
+    public Boolean existeArista(Ciudades vInicio, Ciudades vFinal){
+        int posVinicial = obtenerPos(vInicio);
+        int posVfinal = obtenerPos(vFinal);
+        return conexiones[posVinicial][posVfinal].getExiste();
     }
 
 
     /// /////RECORRIDAS ////////////
 
-    public void dfs(Vertice v) {
+    public void dfs(Ciudades v) {
         boolean[] visitados = new boolean[maxVertices];
         int pos = obtenerPos(v);
         dfsRec(pos, visitados);
@@ -106,14 +109,14 @@ public class Grafo {
         System.out.println(vertices[pos]);
         visitados[pos] = true;
 
-        for (int i = 0; i < aristas.length; i++) {
-            if (aristas[pos][i].getExiste() && !visitados[i]) {
+        for (int i = 0; i < conexiones.length; i++) {
+            if (conexiones[pos][i].getExiste() && !visitados[i]) {
                 dfsRec(i, visitados);
             }
         }
     }
 
-    public void bfs(Vertice v) {
+    public void bfs(Ciudades v) {
         int posV = obtenerPos(v);
         boolean[] visitados = new boolean[maxVertices];
         ICola<Integer> cola = new Cola<>();
@@ -124,8 +127,8 @@ public class Grafo {
         while (!cola.esVacia()) {
             int pos = cola.desencolar();
             System.out.println(vertices[pos] + " ");
-            for (int i = 0; i < aristas.length; i++) {
-                if (aristas[pos][i].getExiste() && !visitados[i]) {
+            for (int i = 0; i < conexiones.length; i++) {
+                if (conexiones[pos][i].getExiste() && !visitados[i]) {
                     visitados[i] = true;
                     cola.encolar(i);
                 }
@@ -135,11 +138,11 @@ public class Grafo {
     }
 
 
-    public ILista<Vertice> adyacentes(Vertice vertice) {
-        int pos = obtenerPos(vertice);
-        ILista<Vertice> adyacentes = new Lista<>();
-        for (int i = 0; i < aristas.length; i++) {
-            if (aristas[pos][i].getExiste()) {
+    public ILista<Ciudades> adyacentes(Ciudades ciudades) {
+        int pos = obtenerPos(ciudades);
+        ILista<Ciudades> adyacentes = new Lista<>();
+        for (int i = 0; i < conexiones.length; i++) {
+            if (conexiones[pos][i].getExiste()) {
                 adyacentes.insertar(vertices[i]);
             }
         }
@@ -157,7 +160,7 @@ public class Grafo {
         return -1; // No hay espacio libre
     }
 
-    private int obtenerPos(Vertice v) {
+    private int obtenerPos(Ciudades v) {
         for (int i = 0; i < vertices.length; i++) {
             if (vertices[i] != null && vertices[i].equals(v)) {
                 return i;

@@ -2,10 +2,10 @@ package grafo;
 
 import java.util.Objects;
 
-public class Vertice {
+public class Ciudades {
     private String id;
 
-    public Vertice(String id) {
+    public Ciudades(String id) {
         this.id = id;
     }
 
@@ -20,8 +20,8 @@ public class Vertice {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Vertice vertice = (Vertice) o;
-        return Objects.equals(id, vertice.id);
+        Ciudades ciudades = (Ciudades) o;
+        return Objects.equals(id, ciudades.id);
     }
 
     @Override

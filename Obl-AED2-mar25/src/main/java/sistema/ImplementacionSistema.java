@@ -2,9 +2,9 @@ package sistema;
 
 import abb.ABB;
 import dominio.*;
-import grafo.Arista;
+import grafo.Conexion;
 import grafo.Grafo;
-import grafo.Vertice;
+import grafo.Ciudades;
 import interfaz.*;
 
 public class ImplementacionSistema implements Sistema {
@@ -202,7 +202,7 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno registrarCiudad(String codigo, String nombre) {
-        if (ciudades.cantidadVertices() >= maxCiudades) {
+        if (this.ciudades.cantidadVertices() >= maxCiudades) {
             return Retorno.error1("Ya se alcanzó el máximo de ciudades registradas");
         }
         if (codigo == null || codigo.trim().isEmpty() || nombre == null || nombre.trim().isEmpty()) {
@@ -214,8 +214,8 @@ public class ImplementacionSistema implements Sistema {
         }
 
         Ciudad ciudad = new Ciudad(codigo, nombre);
-        Vertice vertice = new Vertice(ciudad.getCodigo());
-        ciudades.agregarVertice(vertice);
+        Ciudades ciudades = new Ciudades(ciudad.getCodigo());
+        this.ciudades.agregarVertice(ciudades);
         return Retorno.ok();
 
 
@@ -224,7 +224,7 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno registrarConexion(String codigoCiudadOrigen, String codigoCiudadDestino) {
-        if (codigoCiudadOrigen == null || codigoCiudadDestino == null || codigoCiudadOrigen.isEmpty() || codigoCiudadDestino.isEmpty()) {
+        if (codigoCiudadOrigen == null || codigoCiudadDestino == null || codigoCiudadOrigen.trim().isEmpty() || codigoCiudadDestino.trim().isEmpty()) {
             return Retorno.error1("Los campos no pueden ser nulos o vacios");
         }
 
@@ -235,12 +235,14 @@ public class ImplementacionSistema implements Sistema {
             return Retorno.error3("No existe la ciudad de destino");
         }
 
-        Vertice vOrigen = new Vertice(codigoCiudadOrigen);
-        Vertice vDestino = new Vertice(codigoCiudadDestino);
-        if (ciudades.obtenerArista(vOrigen, vDestino) != null) {
+        Ciudades cOrigen = new Ciudades(codigoCiudadOrigen);
+        Ciudades cDestino = new Ciudades(codigoCiudadDestino);
+
+        if (ciudades.existeArista(cOrigen, cDestino)) {
             return Retorno.error4("Ya existe una conexion entre esas ciudades");
         }
-        ciudades.agregarArista(vOrigen, vDestino, new Arista());
+        Conexion conexion = new Conexion();
+        ciudades.agregarConexion(cOrigen, cDestino, conexion);
         return Retorno.ok();
     }
 
@@ -249,7 +251,7 @@ public class ImplementacionSistema implements Sistema {
         if (combustible <= 0 || minutos <= 0 || costoEnDolares <= 0) {
             return Retorno.error1("Los datos de combustible, minutos y costo en dolares no pueden ser menores o iguales a 0");
         }
-        if (codigoCiudadOrigen == null || codigoCiudadDestino == null || codigoDeVuelo == null || codigoCiudadOrigen.isEmpty() || codigoCiudadDestino.isEmpty() || codigoDeVuelo.isEmpty()) {
+        if (codigoCiudadOrigen == null || codigoCiudadDestino == null || codigoDeVuelo == null || codigoCiudadOrigen.trim().isEmpty() || codigoCiudadDestino.trim().isEmpty() || codigoDeVuelo.trim().isEmpty()) {
             return Retorno.error2("Los campos no pueden ser nulos o vacios");
         }
         if (!existeCiudad(codigoCiudadOrigen)) {
@@ -258,19 +260,24 @@ public class ImplementacionSistema implements Sistema {
         if (!existeCiudad(codigoCiudadDestino)) {
             return Retorno.error4("No existe la ciudad de destino");
         }
-        Vertice vOrigen = new Vertice(codigoCiudadOrigen);
-        Vertice vDestino = new Vertice(codigoCiudadDestino);
-        Arista arista = ciudades.obtenerArista(vOrigen, vDestino);
-        if (arista == null) {
+        Ciudades vOrigen = new Ciudades(codigoCiudadOrigen);
+        Ciudades vDestino = new Ciudades(codigoCiudadDestino);
+        Conexion conexion = ciudades.obtenerArista(vOrigen, vDestino);
+        if (conexion.getExiste()) {
             return Retorno.error5("No existe una conexion entre esas ciudades");
         }
-        /*if(arista.existeVuelo(codigoDeVuelo)){
-            return Retorno.error6("Ya existe un vuelo registrado con ese codigo para esas ciudades");
-        }*/
+
+        if (existeVueloEnConexion(codigoCiudadOrigen, codigoCiudadDestino, codigoDeVuelo)) {
+            return Retorno.error6("Ya existe un vuelo con ese código en esa conexión");
+        }
 
         Vuelo vuelo = new Vuelo(codigoCiudadOrigen, codigoCiudadDestino, codigoDeVuelo, combustible, minutos, costoEnDolares, tipoDeVuelo);
-        arista.agregarVuelo(vuelo);
+
         return Retorno.ok();
+    }
+
+    private boolean existeVueloEnConexion(String codigoCiudadOrigen, String codigoCiudadDestino, String codigoDeVuelo) {
+        return true;
     }
 
     @Override
@@ -296,6 +303,7 @@ public class ImplementacionSistema implements Sistema {
 
     /// METODOS PRIVADOS AUXILIARES//////////
 
+    //eliminar digito verificador
     private int sanitizarCedula(String cedula) {
         return Integer.parseInt(cedula.replaceAll("[.-]", ""));
     }
@@ -344,7 +352,7 @@ public class ImplementacionSistema implements Sistema {
     }
 
     private boolean existeCiudad(String codigo) {
-        Vertice v = new Vertice(codigo);
+        Ciudades v = new Ciudades(codigo);
         return ciudades.existe(v);
     }
 
