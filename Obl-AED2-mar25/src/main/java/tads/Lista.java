@@ -53,6 +53,7 @@ public class Lista<T> implements ILista<T>, Iterable<T> {
         return null;
     }
 
+
     @Override
     public boolean esVacia() {
         return largo == 0;
@@ -67,9 +68,9 @@ public class Lista<T> implements ILista<T>, Iterable<T> {
     public void imprimirDatos() {
         NodoLista<T> aux = inicio;
         while (aux != null) {
-            if (aux.getSig() != null){
+            if (aux.getSig() != null) {
                 System.out.print(aux.getDato() + " -> ");
-            }else{
+            } else {
                 System.out.print(aux.getDato());
             }
             aux = aux.getSig();
@@ -77,8 +78,8 @@ public class Lista<T> implements ILista<T>, Iterable<T> {
         System.out.println();
     }
 
-    public void imprimirDatosV2(NodoLista<T> nodo ) {
-        if (nodo!=null){
+    public void imprimirDatosV2(NodoLista<T> nodo) {
+        if (nodo != null) {
             System.out.println(nodo.getDato());
             imprimirDatosV2(nodo.getSig());
         }
@@ -107,8 +108,7 @@ public class Lista<T> implements ILista<T>, Iterable<T> {
         };
     }
 
-
-    class NodoLista<T>{
+    class NodoLista<T> {
         private T dato;
         private NodoLista<T> sig;
 

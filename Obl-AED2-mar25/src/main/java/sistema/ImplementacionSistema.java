@@ -6,6 +6,7 @@ import grafo.Conexion;
 import grafo.Grafo;
 import grafo.Ciudades;
 import interfaz.*;
+import tads.Lista;
 
 public class ImplementacionSistema implements Sistema {
 
@@ -258,18 +259,19 @@ public class ImplementacionSistema implements Sistema {
         if (!existeCiudad(codigoCiudadDestino)) {
             return Retorno.error4("No existe la ciudad de destino");
         }
-        Ciudades vOrigen = new Ciudades(codigoCiudadOrigen);
-        Ciudades vDestino = new Ciudades(codigoCiudadDestino);
-        //Conexion conexion = ciudades.existeArista(vOrigen, vDestino);
-        if (!ciudades.existeArista(vOrigen, vDestino)) {
+        Ciudades cOrigen = new Ciudades(codigoCiudadOrigen);
+        Ciudades cDestino = new Ciudades(codigoCiudadDestino);
+
+        if (!ciudades.existeArista(cOrigen, cDestino)) {
             return Retorno.error5("No existe una conexion entre esas ciudades");
         }
 
-        if (existeVueloEnConexion(codigoCiudadOrigen, codigoCiudadDestino, codigoDeVuelo)) {
+        Conexion conexion = ciudades.obtenerArista(cOrigen, cDestino);
+
+        if (existeVueloEnConexion(conexion, codigoDeVuelo)) {
             return Retorno.error6("Ya existe un vuelo con ese código en esa conexión");
         }
 
-        Conexion conexion = ciudades.obtenerArista(vOrigen, vDestino);
         Vuelo vuelo = new Vuelo(codigoCiudadOrigen, codigoCiudadDestino, codigoDeVuelo, combustible, minutos, costoEnDolares, tipoDeVuelo);
         conexion.agregarVuelo(vuelo);
         return Retorno.ok();
@@ -278,7 +280,34 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno actualizarVuelo(String codigoCiudadOrigen, String codigoCiudadDestino, String codigoDeVuelo, double combustible, double minutos, double costoEnDolares, TipoVuelo tipoDeVuelo) {
-        return Retorno.noImplementada();
+        if (combustible <= 0 || minutos <= 0 || costoEnDolares <= 0) {
+            return Retorno.error1("Los datos de combustible, minutos y costo en dolares no pueden ser menores o iguales a 0");
+        }
+        if (codigoCiudadOrigen == null || codigoCiudadDestino == null || codigoDeVuelo == null || tipoDeVuelo == null || codigoCiudadOrigen.trim().isEmpty() || codigoCiudadDestino.trim().isEmpty() || codigoDeVuelo.trim().isEmpty() || tipoDeVuelo.getTexto().trim().isEmpty()) {
+            return Retorno.error2("Los campos no pueden ser nulos o vacios");
+        }
+        if (!existeCiudad(codigoCiudadOrigen)) {
+            return Retorno.error3("No existe la ciudad de origen");
+        }
+        if (!existeCiudad(codigoCiudadDestino)) {
+            return Retorno.error4("No existe la ciudad de destino");
+        }
+        Ciudades cOrigen = new Ciudades(codigoCiudadOrigen);
+        Ciudades cDestino = new Ciudades(codigoCiudadDestino);
+        if (!ciudades.existeArista(cOrigen, cDestino)) {
+            return Retorno.error5("No existe una conexion entre esas ciudades");
+        }
+
+        if (!existeVueloEnConexion(cOrigen, cDestino, codigoDeVuelo)) {
+            return Retorno.error6("No existe un vuelo con ese código en esa conexión");
+        }
+
+        Conexion conexion = ciudades.obtenerArista(cOrigen, cDestino);
+        Lista<Vuelo> vuelos = conexion.getVuelos();
+        Vuelo vueloActualizar = vuelos.recuperar(codigoDeVuelo);
+
+
+        return Retorno.ok();
     }
 
     @Override
@@ -352,11 +381,7 @@ public class ImplementacionSistema implements Sistema {
         return ciudades.existe(v);
     }
 
-    private boolean existeVueloEnConexion(String codigoCiudadOrigen, String codigoCiudadDestino, String codigoDeVuelo) {
-        Ciudades vOrigen = new Ciudades(codigoCiudadOrigen);
-        Ciudades vDestino = new Ciudades(codigoCiudadDestino);
-
-        Conexion conexion = ciudades.obtenerArista(vOrigen, vDestino);
+    private boolean existeVueloEnConexion(Conexion conexion, String codigoDeVuelo) {
         return conexion.existeVuelo(codigoDeVuelo);
     }
 

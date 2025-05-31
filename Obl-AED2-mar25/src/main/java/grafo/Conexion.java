@@ -12,6 +12,10 @@ public class Conexion {
         this.vuelos = new Lista<>();
     }
 
+    public Lista<Vuelo> getVuelos() {
+        return vuelos;
+    }
+
     public void setExiste(Boolean existe) {
         this.existe = existe;
     }
@@ -25,12 +29,11 @@ public class Conexion {
     }
 
     public boolean existeVuelo(String codigoDeVuelo) {
-        boolean existeVuelo = false;
         for (Vuelo vuelo : vuelos) {
             if (vuelo.getCodigoDeVuelo().equals(codigoDeVuelo)) {
-                existeVuelo = true;
+                return true;
             }
         }
-        return existeVuelo;
+        return false;
     }
 }
