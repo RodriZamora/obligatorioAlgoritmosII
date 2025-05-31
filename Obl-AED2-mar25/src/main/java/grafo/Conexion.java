@@ -1,6 +1,7 @@
 package grafo;
 
 import dominio.Vuelo;
+import interfaz.TipoVuelo;
 import tads.Lista;
 
 public class Conexion {
@@ -36,4 +37,19 @@ public class Conexion {
         }
         return false;
     }
+
+    public void actualizarVuelo(String codigoDeVuelo, double combustible, double minutos, double costoEnDolares, TipoVuelo tipoDeVuelo) {
+        for (Vuelo vuelo : vuelos) {
+            if (vuelo.getCodigoDeVuelo().equals(codigoDeVuelo)) {
+                vuelo.setCombustible(combustible);
+                vuelo.setMinutos(minutos);
+                vuelo.setCostoEnDolares(costoEnDolares);
+                vuelo.setTipoDeVuelo(tipoDeVuelo);
+                return;
+            }
+        }
+    }
+
+
+
 }

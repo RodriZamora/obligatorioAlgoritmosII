@@ -298,14 +298,16 @@ public class ImplementacionSistema implements Sistema {
             return Retorno.error5("No existe una conexion entre esas ciudades");
         }
 
-        if (!existeVueloEnConexion(cOrigen, cDestino, codigoDeVuelo)) {
+        Conexion conexion = ciudades.obtenerArista(cOrigen, cDestino);
+
+        if (!existeVueloEnConexion(conexion, codigoDeVuelo)) {
             return Retorno.error6("No existe un vuelo con ese código en esa conexión");
         }
 
-        Conexion conexion = ciudades.obtenerArista(cOrigen, cDestino);
-        Lista<Vuelo> vuelos = conexion.getVuelos();
-        Vuelo vueloActualizar = vuelos.recuperar(codigoDeVuelo);
 
+        //Vuelo vuelo = conexion.obtenerVuelo(codigoDeVuelo);
+        //vuelo.actualizarVuelo(codigoCiudadOrigen, codigoCiudadDestino, codigoDeVuelo, combustible, minutos, costoEnDolares, tipoDeVuelo);
+        conexion.actualizarVuelo(codigoDeVuelo, combustible, minutos, costoEnDolares, tipoDeVuelo);
 
         return Retorno.ok();
     }
