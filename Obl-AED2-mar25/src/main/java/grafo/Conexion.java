@@ -6,6 +6,7 @@ import tads.Lista;
 
 public class Conexion {
     private Boolean existe;
+    private int ponderacion;
     private Lista<Vuelo> vuelos;
 
     public Conexion() {
@@ -29,6 +30,14 @@ public class Conexion {
         vuelos.insertar(vuelo);
     }
 
+    public int getPonderacion() {
+        return ponderacion;
+    }
+
+    public void setPonderacion(int ponderacion) {
+        this.ponderacion = ponderacion;
+    }
+
     public boolean existeVuelo(String codigoDeVuelo) {
         for (Vuelo vuelo : vuelos) {
             if (vuelo.getCodigoDeVuelo().equals(codigoDeVuelo)) {
@@ -49,7 +58,6 @@ public class Conexion {
             }
         }
     }
-
 
 
 }

@@ -1,20 +1,19 @@
 package grafo;
 
 import tads.Cola;
-import tads.ICola;
 import tads.ILista;
 import tads.Lista;
 
 public class Grafo {
     private Conexion[][] conexiones;
     private Ciudades[] vertices;
-    private int cantidad;
+    private int cantVertices;
     private final int maxVertices;
     private final boolean dirigido;
 
 
     public Grafo(int cantMaxVertices, boolean esDirigido) {
-        cantidad = 0;
+        cantVertices = 0;
         vertices = new Ciudades[cantMaxVertices];
         conexiones = new Conexion[cantMaxVertices][cantMaxVertices];
         if (esDirigido) {
@@ -38,17 +37,17 @@ public class Grafo {
 
     public void agregarVertice(Ciudades ciudades) {
 
-        if (cantidad < maxVertices) {
+        if (cantVertices < maxVertices) {
             int posLibre = obtenerPosLibre();
             vertices[posLibre] = ciudades;
-            cantidad++;
+            cantVertices++;
         }
     }
 
     public void borrarVertice(Ciudades v) {
         int posVertice = obtenerPos(v);
         vertices[posVertice] = null;
-        cantidad--;
+        cantVertices--;
 
         for (int i = 0; i < conexiones.length; i++) {
             conexiones[posVertice][i].setExiste(false);  //Borro aristas adyacentes
@@ -66,7 +65,7 @@ public class Grafo {
     }
 
     public int cantidadVertices() {
-        return cantidad;
+        return cantVertices;
     }
 
     public void agregarConexion(Ciudades vInicio, Ciudades vFinal, Conexion conexion) {
@@ -90,7 +89,7 @@ public class Grafo {
     }
 
 
-    public Boolean existeArista(Ciudades vInicio, Ciudades vFinal){
+    public Boolean existeArista(Ciudades vInicio, Ciudades vFinal) {
         int posVinicial = obtenerPos(vInicio);
         int posVfinal = obtenerPos(vFinal);
         return conexiones[posVinicial][posVfinal].getExiste();
@@ -99,7 +98,7 @@ public class Grafo {
 
     /// /////RECORRIDAS ////////////
 
-    public void dfs(Ciudades v) {
+    /*public void dfs(Ciudades v) {
         boolean[] visitados = new boolean[maxVertices];
         int pos = obtenerPos(v);
         dfsRec(pos, visitados);
@@ -135,6 +134,109 @@ public class Grafo {
             }
         }
 
+    }*/
+    public void dfs(Ciudades v) {
+        boolean[] visitados = new boolean[maxVertices];
+        int pos = obtenerPos(v);
+        dfsRecursivo(pos, visitados);
+    }
+
+    private void dfsRecursivo(int pos, boolean[] visitados) {
+        System.out.println(vertices[pos]);
+        visitados[pos] = true;
+        for (int i = 0; i < conexiones.length; i++) {
+            if (conexiones[pos][i].getExiste() && !visitados[i]) {
+                dfsRecursivo(i, visitados);
+            }
+        }
+    }
+
+    public void bfs(Ciudades v) {
+        int posV = obtenerPos(v);
+        boolean[] visitados = new boolean[maxVertices];
+        Cola<Integer> cola = new Cola<>();
+        visitados[posV] = true;
+        cola.encolar(posV);
+
+        while (!cola.esVacia()) {
+            int pos = cola.desencolar();
+            System.out.println(vertices[pos] + " ");
+            for (int i = 0; i < conexiones.length; i++) {
+                if (conexiones[pos][i].getExiste() && !visitados[i]) {
+                    visitados[i] = true;
+                    cola.encolar(i);
+                }
+            }
+        }
+    }
+
+    public void bfsConEscalas(Ciudades v, int escala) {
+        int posOrigen = obtenerPos(v);
+        boolean[] visitados = new boolean[maxVertices];
+        Cola<Tupla> cola = new Cola<>();
+
+        visitados[posOrigen] = true;
+        cola.encolar(new Tupla(posOrigen, 0));
+
+        while (!cola.esVacia()) {
+
+            Tupla tupla = cola.desencolar();
+            if (tupla.getEscala() <= escala) {
+                System.out.println(vertices[tupla.getPos()] + ", " + tupla.getEscala() + " escalas");
+                for (int i = 0; i < conexiones.length; i++) {
+                    if (conexiones[tupla.getPos()][i].getExiste() && !visitados[i]) {
+                        visitados[i] = true;
+                        cola.encolar(new Tupla(i, tupla.getEscala() + 1));
+                    }
+                }
+            }
+        }
+    }
+
+    public void dijkstra(Ciudades vOrigen) {
+        int posOrigen = obtenerPos(vOrigen);
+        boolean[] visitados = new boolean[maxVertices];
+        int[] costos = new int[maxVertices];
+        int[] anteriores = new int[maxVertices];
+
+        for (int i = 0; i < maxVertices; i++) {
+            costos[i] = Integer.MAX_VALUE; // Inicializar costos a infinito
+            anteriores[i] = -1; // No hay anterior al inicio
+            visitados[i] = false; // Ningún vértice visitado
+
+        }
+
+        costos[posOrigen] = 0; // El costo al origen es 0
+        for (int v = 0; v < cantVertices; v++) {
+            int pos = obtenerVerticeNoVisitadoDeMenorCosto(visitados, costos);
+
+            if (pos != -1) {
+                //Lo hago para los vertices que puedo llegar desde la salida
+                visitados[pos] = true;
+
+                for (int i = 0; i < conexiones.length; i++) {
+                    if (conexiones[pos][i].getExiste() && !visitados[i]) {
+                        int distanciaNueva = costos[pos] + conexiones[pos][i].getPonderacion();
+                        if (distanciaNueva < costos[i]) {
+                            costos[i] = distanciaNueva;
+                            anteriores[i] = pos; // Guardar el vértice anterior
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private int obtenerVerticeNoVisitadoDeMenorCosto(boolean[] visitados, int[] costos) {
+        int posMin = -1;
+        int min = Integer.MAX_VALUE;
+        for (int i = 0; i < maxVertices; i++) {
+            if (!visitados[i] && costos[i] < min) {
+                min = costos[i];
+                posMin = i;
+            }
+        }
+        return posMin;
     }
 
 
