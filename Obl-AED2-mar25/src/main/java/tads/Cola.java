@@ -4,30 +4,28 @@ public class Cola<T> implements ICola<T> {
 
     private Nodo<T> inicio;
     private Nodo<T> fin;
+    private int cant;
 
 
     @Override
     public void encolar(T dato) {
-        Nodo<T> nuevoNodo = new Nodo<>(dato);
-        //pregunto si la lista es vacia
-        if (fin == null) {
-            inicio = nuevoNodo;
-            fin = nuevoNodo;
-        } else {
-            //el ultimo nodo apunta al nuevo
-            fin.setSig(nuevoNodo);
-            //el nodo que ingreso ahora es el ultimo
-            fin = nuevoNodo;
+        if (fin == null)
+            fin = inicio = new Nodo<T>(dato);
+        else {
+            fin.setSig(new Nodo<T>(dato));
+            fin = fin.getSig();
         }
+        cant++;
     }
 
     @Override
     public T desencolar() {
-        T aux = inicio.getDato();
-
+        T dato = inicio.getDato();
         inicio = inicio.getSig();
-
-        return aux;
+        if (inicio == null)
+            fin = null;
+        cant--;
+        return dato;
     }
 
     @Override
@@ -37,12 +35,12 @@ public class Cola<T> implements ICola<T> {
 
     @Override
     public boolean esVacia() {
-        return inicio == null;
+        return cant == 0;
     }
 
     @Override
-    public T largo() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public int largo() {
+        return cant;
     }
 
 }

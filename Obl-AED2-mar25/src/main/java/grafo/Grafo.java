@@ -1,12 +1,14 @@
 package grafo;
 
+import dominio.Ciudad;
 import tads.Cola;
+import tads.ICola;
 import tads.ILista;
 import tads.Lista;
 
 public class Grafo {
     private Conexion[][] conexiones;
-    private Ciudades[] vertices;
+    private Ciudades[] ciudades;
     private int cantVertices;
     private final int maxVertices;
     private final boolean dirigido;
@@ -14,7 +16,7 @@ public class Grafo {
 
     public Grafo(int cantMaxVertices, boolean esDirigido) {
         cantVertices = 0;
-        vertices = new Ciudades[cantMaxVertices];
+        ciudades = new Ciudades[cantMaxVertices];
         conexiones = new Conexion[cantMaxVertices][cantMaxVertices];
         if (esDirigido) {
             for (int i = 0; i < conexiones.length; i++) {
@@ -39,14 +41,14 @@ public class Grafo {
 
         if (cantVertices < maxVertices) {
             int posLibre = obtenerPosLibre();
-            vertices[posLibre] = ciudades;
+            this.ciudades[posLibre] = ciudades;
             cantVertices++;
         }
     }
 
     public void borrarVertice(Ciudades v) {
         int posVertice = obtenerPos(v);
-        vertices[posVertice] = null;
+        ciudades[posVertice] = null;
         cantVertices--;
 
         for (int i = 0; i < conexiones.length; i++) {
@@ -56,8 +58,8 @@ public class Grafo {
     }
 
     public boolean existe(Ciudades v) {
-        for (int i = 0; i < vertices.length; i++) {
-            if (vertices[i] != null && vertices[i].equals(v)) {
+        for (int i = 0; i < ciudades.length; i++) {
+            if (ciudades[i] != null && ciudades[i].equals(v)) {
                 return true;
             }
         }
@@ -142,7 +144,7 @@ public class Grafo {
     }
 
     private void dfsRecursivo(int pos, boolean[] visitados) {
-        System.out.println(vertices[pos]);
+        System.out.println(ciudades[pos]);
         visitados[pos] = true;
         for (int i = 0; i < conexiones.length; i++) {
             if (conexiones[pos][i].getExiste() && !visitados[i]) {
@@ -151,47 +153,86 @@ public class Grafo {
         }
     }
 
-    public void bfs(Ciudades v) {
+    /*public String bfsConEscalas(Ciudades v, int cant) {
         int posV = obtenerPos(v);
+        String valorString = "";
         boolean[] visitados = new boolean[maxVertices];
+        int[] niveles = new int[maxVertices];
         Cola<Integer> cola = new Cola<>();
+        Lista<Ciudades> result = new Lista<>();
+
         visitados[posV] = true;
+        niveles[posV] = 0;
         cola.encolar(posV);
 
         while (!cola.esVacia()) {
             int pos = cola.desencolar();
-            System.out.println(vertices[pos] + " ");
-            for (int i = 0; i < conexiones.length; i++) {
-                if (conexiones[pos][i].getExiste() && !visitados[i]) {
-                    visitados[i] = true;
-                    cola.encolar(i);
-                }
+
+            if (niveles[pos] <= cant) {
+                result.agregarAlFinal(ciudades[pos]);
             }
-        }
-    }
 
-    public void bfsConEscalas(Ciudades v, int escala) {
-        int posOrigen = obtenerPos(v);
-        boolean[] visitados = new boolean[maxVertices];
-        Cola<Tupla> cola = new Cola<>();
-
-        visitados[posOrigen] = true;
-        cola.encolar(new Tupla(posOrigen, 0));
-
-        while (!cola.esVacia()) {
-
-            Tupla tupla = cola.desencolar();
-            if (tupla.getEscala() <= escala) {
-                System.out.println(vertices[tupla.getPos()] + ", " + tupla.getEscala() + " escalas");
-                for (int i = 0; i < conexiones.length; i++) {
-                    if (conexiones[tupla.getPos()][i].getExiste() && !visitados[i]) {
-                        visitados[i] = true;
-                        cola.encolar(new Tupla(i, tupla.getEscala() + 1));
+            for (int i = 0; i < maxVertices; i++) {
+                if (conexiones[pos][i] != null && conexiones[pos][i].getExiste() && !visitados[i] && conexiones[pos][i].getVuelos().largo() > 0) {
+                    visitados[i] = true;
+                    niveles[i] = niveles[pos] + 1;
+                    if (niveles[i] <= cant) {
+                        cola.encolar(i);
                     }
                 }
             }
         }
+
+        for (int i = 0; i < result.largo(); i++) {
+            Ciudades ciudad = result.recuperar(i);
+            if (ciudad != null) {
+                valorString += ciudad.toString();
+                if (i < result.largo() - 1) {
+                    valorString += "|";
+                }
+            }
+        }
+        return valorString;
+    }*/
+
+    public Lista<Ciudades> bfsConEscalas(Ciudades v, int cant) {
+        int posV = obtenerPos(v);
+        boolean[] visitados = new boolean[maxVertices];
+        int[] niveles = new int[maxVertices];
+        Cola<Integer> cola = new Cola<>();
+        Lista<Ciudades> result = new Lista<>();
+
+        visitados[posV] = true;
+        niveles[posV] = 0;
+        cola.encolar(posV);
+
+        while (!cola.esVacia()) {
+            int pos = cola.desencolar();
+
+            // ✅ Igual que el método original: incluye origen (nivel 0) hasta nivel 'cant'
+            if (niveles[pos] <= cant) {
+                result.agregarAlFinal(ciudades[pos]);
+            }
+
+            for (int i = 0; i < maxVertices; i++) {
+                if (conexiones[pos][i] != null &&
+                        conexiones[pos][i].getExiste() &&
+                        !visitados[i] &&
+                        conexiones[pos][i].getVuelos().largo() > 0) {
+
+                    visitados[i] = true;
+                    niveles[i] = niveles[pos] + 1;
+
+                    if (niveles[i] <= cant) {
+                        cola.encolar(i);
+                    }
+                }
+            }
+        }
+
+        return result;
     }
+
 
     public void dijkstra(Ciudades vOrigen) {
         int posOrigen = obtenerPos(vOrigen);
@@ -245,7 +286,7 @@ public class Grafo {
         ILista<Ciudades> adyacentes = new Lista<>();
         for (int i = 0; i < conexiones.length; i++) {
             if (conexiones[pos][i].getExiste()) {
-                adyacentes.insertar(vertices[i]);
+                adyacentes.insertar(this.ciudades[i]);
             }
         }
         return adyacentes;
@@ -254,8 +295,8 @@ public class Grafo {
     //Metodos privados
 
     private int obtenerPosLibre() {
-        for (int i = 0; i < vertices.length; i++) {
-            if (vertices[i] == null) {
+        for (int i = 0; i < ciudades.length; i++) {
+            if (ciudades[i] == null) {
                 return i;
             }
         }
@@ -263,8 +304,8 @@ public class Grafo {
     }
 
     private int obtenerPos(Ciudades v) {
-        for (int i = 0; i < vertices.length; i++) {
-            if (vertices[i] != null && vertices[i].equals(v)) {
+        for (int i = 0; i < ciudades.length; i++) {
+            if (ciudades[i] != null && ciudades[i].equals(v)) {
                 return i;
             }
         }
@@ -272,4 +313,12 @@ public class Grafo {
     }
 
 
+    public Ciudades obtenerCiudad(String codigoCiudadOrigen) {
+        for (int i = 0; i < ciudades.length; i++) {
+            if (ciudades[i] != null && ciudades[i].getCodigoCiudad().equals(codigoCiudadOrigen)) {
+                return ciudades[i];
+            }
+        }
+        return null; // No se encontró el vértice
+    }
 }

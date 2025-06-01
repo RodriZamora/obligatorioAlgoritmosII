@@ -9,8 +9,10 @@ public interface ILista<T> {
     int largo();
     boolean existe(T dato);
     T recuperar(T dato);
+    T recuperar(int dato);
     boolean esVacia();
     boolean esLlena();
     void imprimirDatos();
     Iterator<T> iterator();
+    void agregarAlFinal(T dato);
 }

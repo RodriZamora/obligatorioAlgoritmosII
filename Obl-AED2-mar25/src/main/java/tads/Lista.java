@@ -1,9 +1,12 @@
 package tads;
 
 
+import grafo.Ciudades;
+
+import java.util.Comparator;
 import java.util.Iterator;
 
-public class Lista<T> implements ILista<T>, Iterable<T> {
+public class Lista<T extends Comparable<T>> implements ILista<T>, Iterable<T> {
 
     protected NodoLista<T> inicio;
     protected int largo;
@@ -53,6 +56,18 @@ public class Lista<T> implements ILista<T>, Iterable<T> {
         return null;
     }
 
+    @Override
+    public T recuperar(int pos) {
+        if (pos < 0 || pos >= largo) {
+            return null;
+        }
+        NodoLista<T> aux = inicio;
+        for (int i = 0; i < pos; i++) {
+            aux = aux.getSig();
+        }
+        return aux.getDato();
+    }
+
 
     @Override
     public boolean esVacia() {
@@ -85,6 +100,31 @@ public class Lista<T> implements ILista<T>, Iterable<T> {
         }
     }
 
+    public void ordenarLexicograficamentePorCodigo() {
+        if (inicio == null || inicio.getSig() == null) return;
+
+        boolean huboCambios;
+        do {
+            huboCambios = false;
+            NodoLista<T> actual = inicio;
+            while (actual != null && actual.getSig() != null) {
+                // Se asume que T es Ciudades
+                Ciudades ciudad1 = (Ciudades) actual.getDato();
+                Ciudades ciudad2 = (Ciudades) actual.getSig().getDato();
+
+                if (ciudad1.getCodigoCiudad().compareTo(ciudad2.getCodigoCiudad()) > 0) {
+                    // Intercambiar los datos
+                    T temp = actual.getDato();
+                    actual.setDato(actual.getSig().getDato());
+                    actual.getSig().setDato(temp);
+                    huboCambios = true;
+                }
+                actual = actual.getSig();
+            }
+        } while (huboCambios);
+    }
+
+
     public Iterator<T> iterator() {
         return new Iterator<T>() {
             private NodoLista<T> aux = inicio;
@@ -107,6 +147,40 @@ public class Lista<T> implements ILista<T>, Iterable<T> {
 
         };
     }
+
+    @Override
+    public void agregarAlFinal(T elemento) {
+        // Pre: El elemento no pued ser nulo.
+        // Post: El elemento se agrega ordenado en la lista.
+
+        if (esVacia() || elemento.compareTo(inicio.getDato()) < 0) {
+            inicio = new NodoLista<>(elemento, inicio);
+        } else {
+            NodoLista<T> aux = inicio;
+            while (aux.getSig() != null && aux.getSig().getDato().compareTo(elemento) < 0) {
+                aux = aux.getSig();
+            }
+            NodoLista<T> nuevo = new NodoLista<>(elemento, aux.getSig());
+            aux.setSig(nuevo);
+        }
+        this.largo++;
+    }
+
+    public NodoLista<T> getInicio() {
+        return inicio;
+    }
+
+    public T obtenerPorIndice(int i) {
+        NodoLista<T> aux = inicio;
+        while (aux != null) {
+            if (aux.getDato().equals(i)) {
+                return aux.getDato();
+            }
+            aux = aux.getSig();
+        }
+        return null;
+    }
+
 
     class NodoLista<T> {
         private T dato;

@@ -8,32 +8,19 @@ import grafo.Ciudades;
 import interfaz.*;
 import tads.Lista;
 
+
 public class ImplementacionSistema implements Sistema {
 
     private int maxCiudades;
-    //private ABB<Ciudad> ciudades;
     private ABB<Viajero> viajerosCedula;
     private ABB<ViajeroWrapper> viajerosCorreo;
     private ABB<Viajero> viajerosPlatinos;
     private ABB<Viajero> viajerosEstandar;
     private ABB<Viajero> viajerosFrecuentes;
-    /*private ABB<Viajero> viajeroRango0;
-    private ABB<Viajero> viajeroRango1;
-    private ABB<Viajero> viajeroRango2;
-    private ABB<Viajero> viajeroRango3;
-    private ABB<Viajero> viajeroRango4;
-    private ABB<Viajero> viajeroRango5;
-    private ABB<Viajero> viajeroRango6;
-    private ABB<Viajero> viajeroRango7;
-    private ABB<Viajero> viajeroRango8;
-    private ABB<Viajero> viajeroRango9;
-    private ABB<Viajero> viajeroRango10;
-    private ABB<Viajero> viajeroRango11;
-    private ABB<Viajero> viajeroRango12;
-    private ABB<Viajero> viajeroRango13;*/
+
     private ABB<Viajero>[] viajerosPorRango = new ABB[14];
 
-    private Grafo ciudades;
+    private Grafo grafo;
 
 
     private boolean sistemaInicializado = false;
@@ -52,25 +39,12 @@ public class ImplementacionSistema implements Sistema {
         this.viajerosFrecuentes = new ABB<>();
         this.viajerosPlatinos = new ABB<>();
         this.sistemaInicializado = true;
-        /*this.viajeroRango0 = new ABB<>();
-        this.viajeroRango1 = new ABB<>();
-        this.viajeroRango2 = new ABB<>();
-        this.viajeroRango3 = new ABB<>();
-        this.viajeroRango4 = new ABB<>();
-        this.viajeroRango5 = new ABB<>();
-        this.viajeroRango6 = new ABB<>();
-        this.viajeroRango7 = new ABB<>();
-        this.viajeroRango8 = new ABB<>();
-        this.viajeroRango9 = new ABB<>();
-        this.viajeroRango10 = new ABB<>();
-        this.viajeroRango11 = new ABB<>();
-        this.viajeroRango12 = new ABB<>();
-        this.viajeroRango13 = new ABB<>();*/
+
         for (int i = 0; i < 14; i++) {
             viajerosPorRango[i] = new ABB<>();
         }
 
-        this.ciudades = new Grafo(maxCiudades, true);
+        this.grafo = new Grafo(maxCiudades, true);
 
         return Retorno.ok();
     }
@@ -203,7 +177,7 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno registrarCiudad(String codigo, String nombre) {
-        if (this.ciudades.cantidadVertices() >= maxCiudades) {
+        if (this.grafo.cantidadVertices() >= maxCiudades) {
             return Retorno.error1("Ya se alcanzó el máximo de ciudades registradas");
         }
         if (codigo == null || codigo.trim().isEmpty() || nombre == null || nombre.trim().isEmpty()) {
@@ -215,8 +189,8 @@ public class ImplementacionSistema implements Sistema {
         }
 
         Ciudad ciudad = new Ciudad(codigo, nombre);
-        Ciudades ciudades = new Ciudades(ciudad.getCodigo());
-        this.ciudades.agregarVertice(ciudades);
+        Ciudades ciudades = new Ciudades(ciudad.getCodigo(), ciudad.getNombre());
+        this.grafo.agregarVertice(ciudades);
         return Retorno.ok();
     }
 
@@ -237,11 +211,11 @@ public class ImplementacionSistema implements Sistema {
         Ciudades cOrigen = new Ciudades(codigoCiudadOrigen);
         Ciudades cDestino = new Ciudades(codigoCiudadDestino);
 
-        if (ciudades.existeArista(cOrigen, cDestino)) {
+        if (grafo.existeArista(cOrigen, cDestino)) {
             return Retorno.error4("Ya existe una conexion entre esas ciudades");
         }
         Conexion conexion = new Conexion();
-        ciudades.agregarConexion(cOrigen, cDestino, conexion);
+        grafo.agregarConexion(cOrigen, cDestino, conexion);
         return Retorno.ok();
     }
 
@@ -262,11 +236,11 @@ public class ImplementacionSistema implements Sistema {
         Ciudades cOrigen = new Ciudades(codigoCiudadOrigen);
         Ciudades cDestino = new Ciudades(codigoCiudadDestino);
 
-        if (!ciudades.existeArista(cOrigen, cDestino)) {
+        if (!grafo.existeArista(cOrigen, cDestino)) {
             return Retorno.error5("No existe una conexion entre esas ciudades");
         }
 
-        Conexion conexion = ciudades.obtenerArista(cOrigen, cDestino);
+        Conexion conexion = grafo.obtenerArista(cOrigen, cDestino);
 
         if (existeVueloEnConexion(conexion, codigoDeVuelo)) {
             return Retorno.error6("Ya existe un vuelo con ese código en esa conexión");
@@ -294,19 +268,16 @@ public class ImplementacionSistema implements Sistema {
         }
         Ciudades cOrigen = new Ciudades(codigoCiudadOrigen);
         Ciudades cDestino = new Ciudades(codigoCiudadDestino);
-        if (!ciudades.existeArista(cOrigen, cDestino)) {
+        if (!grafo.existeArista(cOrigen, cDestino)) {
             return Retorno.error5("No existe una conexion entre esas ciudades");
         }
 
-        Conexion conexion = ciudades.obtenerArista(cOrigen, cDestino);
+        Conexion conexion = grafo.obtenerArista(cOrigen, cDestino);
 
         if (!existeVueloEnConexion(conexion, codigoDeVuelo)) {
             return Retorno.error6("No existe un vuelo con ese código en esa conexión");
         }
 
-
-        //Vuelo vuelo = conexion.obtenerVuelo(codigoDeVuelo);
-        //vuelo.actualizarVuelo(codigoCiudadOrigen, codigoCiudadDestino, codigoDeVuelo, combustible, minutos, costoEnDolares, tipoDeVuelo);
         conexion.actualizarVuelo(codigoDeVuelo, combustible, minutos, costoEnDolares, tipoDeVuelo);
 
         return Retorno.ok();
@@ -314,8 +285,26 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno listadoCiudadesCantDeEscalas(String codigoCiudadOrigen, int cantidad) {
-        return Retorno.noImplementada();
+        if (cantidad < 0) {
+            return Retorno.error1("La cantidad de escalas no puede ser negativa");
+        }
+        if (codigoCiudadOrigen == null || codigoCiudadOrigen.trim().isEmpty()) {
+            return Retorno.error2("El codigo de la ciudad de origen no puede ser nulo o vacio");
+        }
+        if (!existeCiudad(codigoCiudadOrigen)) {
+            return Retorno.error3("No existe la ciudad de origen");
+        }
+        Ciudades ciudadOrigen = grafo.obtenerCiudad(codigoCiudadOrigen);
+
+        /*String resultado = grafo.bfsConEscalas(ciudadOrigen, cantidad);
+        return Retorno.ok(resultado);*/
+        Lista<Ciudades> ciudadesAlcanzables = grafo.bfsConEscalas(ciudadOrigen, cantidad);
+        ciudadesAlcanzables.ordenarLexicograficamentePorCodigo();
+        String resultado = formatearCiudades(ciudadesAlcanzables);
+
+        return Retorno.ok(resultado);
     }
+
 
     @Override
     public Retorno viajeCostoMinimoMinutos(String codigoCiudadOrigen, String codigoCiudadDestino, TipoVueloPermitido tipoVueloPermitido) {
@@ -332,8 +321,11 @@ public class ImplementacionSistema implements Sistema {
 
     //eliminar digito verificador
     private int sanitizarCedula(String cedula) {
-        return Integer.parseInt(cedula.replaceAll("[.-]", ""));
+        String limpia = cedula.replaceAll("[.-]", ""); // Quitar puntos y guion
+        String sinDigitoVerificador = limpia.substring(0, limpia.length() - 1); // Quitar el último carácter
+        return Integer.parseInt(sinDigitoVerificador);
     }
+
 
     private boolean existeViajeroCorreo(String correo) {
         ViajeroWrapper viajeroBuscado = new ViajeroWrapper(correo);
@@ -380,11 +372,33 @@ public class ImplementacionSistema implements Sistema {
 
     private boolean existeCiudad(String codigo) {
         Ciudades v = new Ciudades(codigo);
-        return ciudades.existe(v);
+        return grafo.existe(v);
     }
 
     private boolean existeVueloEnConexion(Conexion conexion, String codigoDeVuelo) {
         return conexion.existeVuelo(codigoDeVuelo);
+    }
+
+    private Ciudades obtenerCiudad(String codigoCiudadOrigen) {
+        Ciudades ciudadOrigen = new Ciudades(codigoCiudadOrigen);
+        if (!grafo.existe(ciudadOrigen)) {
+            return null;
+        }
+        return ciudadOrigen;
+    }
+
+    private String formatearCiudades(Lista<Ciudades> ciudadesAlcanzables) {
+        StringBuilder resultado = new StringBuilder();
+        for (int i = 0; i < ciudadesAlcanzables.largo(); i++) {
+            Ciudades ciudad = ciudadesAlcanzables.recuperar(i);
+            if (ciudad != null) {
+                resultado.append(ciudad.toString());
+                if (i < ciudadesAlcanzables.largo() - 1) {
+                    resultado.append("|");
+                }
+            }
+        }
+        return resultado.toString();
     }
 
 }

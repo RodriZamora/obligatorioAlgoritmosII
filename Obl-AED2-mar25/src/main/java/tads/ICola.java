@@ -13,6 +13,6 @@ public interface ICola<T> {
 
     boolean esVacia();
 
-    T largo();
+    int largo();
 }
 
