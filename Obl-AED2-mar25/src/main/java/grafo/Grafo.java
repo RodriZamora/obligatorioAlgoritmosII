@@ -1,6 +1,9 @@
 package grafo;
 
 import dominio.Ciudad;
+import dominio.Vuelo;
+import interfaz.TipoVuelo;
+import interfaz.TipoVueloPermitido;
 import tads.Cola;
 import tads.ICola;
 import tads.ILista;
@@ -46,16 +49,6 @@ public class Grafo {
         }
     }
 
-    public void borrarVertice(Ciudades v) {
-        int posVertice = obtenerPos(v);
-        ciudades[posVertice] = null;
-        cantVertices--;
-
-        for (int i = 0; i < conexiones.length; i++) {
-            conexiones[posVertice][i].setExiste(false);  //Borro aristas adyacentes
-            conexiones[i][posVertice].setExiste(false); //Borro aristas incidentes
-        }
-    }
 
     public boolean existe(Ciudades v) {
         for (int i = 0; i < ciudades.length; i++) {
@@ -77,13 +70,6 @@ public class Grafo {
         a.setExiste(true);
     }
 
-    public void borrarArista(Ciudades vInicio, Ciudades vFinal) {
-        int posVinicial = obtenerPos(vInicio);
-        int posVfinal = obtenerPos(vFinal);
-
-        conexiones[posVinicial][posVfinal].setExiste(false);
-    }
-
     public Conexion obtenerArista(Ciudades vInicio, Ciudades vFinal) {
         int posVinicial = obtenerPos(vInicio);
         int posVfinal = obtenerPos(vFinal);
@@ -100,62 +86,8 @@ public class Grafo {
 
     /// /////RECORRIDAS ////////////
 
-    /*public void dfs(Ciudades v) {
-        boolean[] visitados = new boolean[maxVertices];
-        int pos = obtenerPos(v);
-        dfsRec(pos, visitados);
-    }
-
-    private void dfsRec(int pos, boolean[] visitados) {
-        System.out.println(vertices[pos]);
-        visitados[pos] = true;
-
-        for (int i = 0; i < conexiones.length; i++) {
-            if (conexiones[pos][i].getExiste() && !visitados[i]) {
-                dfsRec(i, visitados);
-            }
-        }
-    }
-
-    public void bfs(Ciudades v) {
-        int posV = obtenerPos(v);
-        boolean[] visitados = new boolean[maxVertices];
-        ICola<Integer> cola = new Cola<>();
-
-        visitados[posV] = true;
-        cola.encolar(posV);
-
-        while (!cola.esVacia()) {
-            int pos = cola.desencolar();
-            System.out.println(vertices[pos] + " ");
-            for (int i = 0; i < conexiones.length; i++) {
-                if (conexiones[pos][i].getExiste() && !visitados[i]) {
-                    visitados[i] = true;
-                    cola.encolar(i);
-                }
-            }
-        }
-
-    }*/
-    public void dfs(Ciudades v) {
-        boolean[] visitados = new boolean[maxVertices];
-        int pos = obtenerPos(v);
-        dfsRecursivo(pos, visitados);
-    }
-
-    private void dfsRecursivo(int pos, boolean[] visitados) {
-        System.out.println(ciudades[pos]);
-        visitados[pos] = true;
-        for (int i = 0; i < conexiones.length; i++) {
-            if (conexiones[pos][i].getExiste() && !visitados[i]) {
-                dfsRecursivo(i, visitados);
-            }
-        }
-    }
-
-    /*public String bfsConEscalas(Ciudades v, int cant) {
-        int posV = obtenerPos(v);
-        String valorString = "";
+    public Lista<Ciudades> bfsConEscalas(Ciudades c, int cant) {
+        int posV = obtenerPos(c);
         boolean[] visitados = new boolean[maxVertices];
         int[] niveles = new int[maxVertices];
         Cola<Integer> cola = new Cola<>();
@@ -168,48 +100,6 @@ public class Grafo {
         while (!cola.esVacia()) {
             int pos = cola.desencolar();
 
-            if (niveles[pos] <= cant) {
-                result.agregarAlFinal(ciudades[pos]);
-            }
-
-            for (int i = 0; i < maxVertices; i++) {
-                if (conexiones[pos][i] != null && conexiones[pos][i].getExiste() && !visitados[i] && conexiones[pos][i].getVuelos().largo() > 0) {
-                    visitados[i] = true;
-                    niveles[i] = niveles[pos] + 1;
-                    if (niveles[i] <= cant) {
-                        cola.encolar(i);
-                    }
-                }
-            }
-        }
-
-        for (int i = 0; i < result.largo(); i++) {
-            Ciudades ciudad = result.recuperar(i);
-            if (ciudad != null) {
-                valorString += ciudad.toString();
-                if (i < result.largo() - 1) {
-                    valorString += "|";
-                }
-            }
-        }
-        return valorString;
-    }*/
-
-    public Lista<Ciudades> bfsConEscalas(Ciudades v, int cant) {
-        int posV = obtenerPos(v);
-        boolean[] visitados = new boolean[maxVertices];
-        int[] niveles = new int[maxVertices];
-        Cola<Integer> cola = new Cola<>();
-        Lista<Ciudades> result = new Lista<>();
-
-        visitados[posV] = true;
-        niveles[posV] = 0;
-        cola.encolar(posV);
-
-        while (!cola.esVacia()) {
-            int pos = cola.desencolar();
-
-            // ✅ Igual que el método original: incluye origen (nivel 0) hasta nivel 'cant'
             if (niveles[pos] <= cant) {
                 result.agregarAlFinal(ciudades[pos]);
             }
@@ -234,43 +124,144 @@ public class Grafo {
     }
 
 
-    public void dijkstra(Ciudades vOrigen) {
+    public String dijkstraConDestinoYCosto(Ciudades vOrigen, Ciudades vDestino, TipoVueloPermitido tipoVueloPermitido, double[] costoTotal) {
         int posOrigen = obtenerPos(vOrigen);
+        int posDestino = obtenerPos(vDestino);
+
         boolean[] visitados = new boolean[maxVertices];
-        int[] costos = new int[maxVertices];
+        double[] costos = new double[maxVertices];
         int[] anteriores = new int[maxVertices];
 
+
         for (int i = 0; i < maxVertices; i++) {
-            costos[i] = Integer.MAX_VALUE; // Inicializar costos a infinito
-            anteriores[i] = -1; // No hay anterior al inicio
-            visitados[i] = false; // Ningún vértice visitado
+            costos[i] = Double.MAX_VALUE;
+            anteriores[i] = -1;
 
         }
+        costos[posOrigen] = 0;
 
-        costos[posOrigen] = 0; // El costo al origen es 0
-        for (int v = 0; v < cantVertices; v++) {
-            int pos = obtenerVerticeNoVisitadoDeMenorCosto(visitados, costos);
+        for (int i = 0; i < cantVertices; i++) {
+            int posActual = obtenerVerticesNoVisitadoDeMenorCostoDouble(visitados, costos);
 
-            if (pos != -1) {
-                //Lo hago para los vertices que puedo llegar desde la salida
-                visitados[pos] = true;
+            if (posActual != -1) {
+                visitados[posActual] = true;
 
-                for (int i = 0; i < conexiones.length; i++) {
-                    if (conexiones[pos][i].getExiste() && !visitados[i]) {
-                        int distanciaNueva = costos[pos] + conexiones[pos][i].getPonderacion();
-                        if (distanciaNueva < costos[i]) {
-                            costos[i] = distanciaNueva;
-                            anteriores[i] = pos; // Guardar el vértice anterior
+                for (int j = 0; j < cantVertices; j++) {
+                    if (!visitados[j]) {
+                        Conexion arista = conexiones[posActual][j];
+                        if (arista != null && arista.getExiste()) {
+
+                            for (Vuelo vuelo : arista.getVuelos()) {
+                                if (tipoVueloPermitido == TipoVueloPermitido.AMBOS
+                                        || vuelo.getTipoDeVuelo().getTexto().equals(tipoVueloPermitido.getTexto())) {
+                                    double nuevoCosto = costos[posActual] + vuelo.getMinutos();
+
+                                    if (nuevoCosto < costos[j]) {
+                                        // mejor costo: actualizamos todo
+                                        costos[j] = nuevoCosto;
+                                        anteriores[j] = posActual;
+
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
+
+        if (costos[posDestino] == Double.MAX_VALUE) {
+            return null; // no hay camino
+        }
+
+        // reconstrucción del camino
+        StringBuilder camino = new StringBuilder();
+        int pos = posDestino;
+        while (pos != -1) {
+            camino.insert(0, ciudades[pos].getCodigoCiudad() + ";" + ciudades[pos].getNombreCiudad() + "|");
+            pos = anteriores[pos];
+        }
+
+        if (camino.length() > 0) {
+            camino.setLength(camino.length() - 1);
+        }
+
+        costoTotal[0] = costos[posDestino];
+        return camino.toString();
     }
 
-    private int obtenerVerticeNoVisitadoDeMenorCosto(boolean[] visitados, int[] costos) {
+
+    public String dijkstraCostoDolares(Ciudades ciudadOrigen, Ciudades ciudadDestino, TipoVueloPermitido
+            tipoVueloPermitido, double[] costoTotal) {
+        int posOrigen = obtenerPos(ciudadOrigen);
+        int posDestino = obtenerPos(ciudadDestino);
+
+        boolean[] visitados = new boolean[maxVertices];
+        double[] costos = new double[maxVertices];
+        int[] anteriores = new int[maxVertices];
+
+
+        for (int i = 0; i < maxVertices; i++) {
+            costos[i] = Double.MAX_VALUE;
+            anteriores[i] = -1;
+
+        }
+        costos[posOrigen] = 0;
+
+        for (int i = 0; i < cantVertices; i++) {
+            int posActual = obtenerVerticesNoVisitadoDeMenorCostoDouble(visitados, costos);
+
+            if (posActual != -1) {
+                visitados[posActual] = true;
+
+                for (int j = 0; j < cantVertices; j++) {
+                    if (!visitados[j]) {
+                        Conexion arista = conexiones[posActual][j];
+                        if (arista != null && arista.getExiste()) {
+
+                            for (Vuelo vuelo : arista.getVuelos()) {
+                                if (tipoVueloPermitido == TipoVueloPermitido.AMBOS
+                                        || vuelo.getTipoDeVuelo().getTexto().equals(tipoVueloPermitido.getTexto())) {
+
+                                    double nuevoCosto = costos[posActual] + vuelo.getCostoEnDolares();
+
+                                    if (nuevoCosto < costos[j]) {
+                                        // mejor costo: actualizamos todo
+                                        costos[j] = nuevoCosto;
+                                        anteriores[j] = posActual;
+
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (costos[posDestino] == Double.MAX_VALUE) {
+            return null; // no hay camino
+        }
+
+        // reconstrucción del camino
+        StringBuilder camino = new StringBuilder();
+        int pos = posDestino;
+        while (pos != -1) {
+            camino.insert(0, ciudades[pos].getCodigoCiudad() + ";" + ciudades[pos].getNombreCiudad() + "|");
+            pos = anteriores[pos];
+        }
+
+        if (camino.length() > 0) camino.setLength(camino.length() - 1);
+
+        costoTotal[0] = costos[posDestino];
+        return camino.toString();
+    }
+
+
+    private int obtenerVerticesNoVisitadoDeMenorCostoDouble(boolean[] visitados, double[] costos) {
         int posMin = -1;
-        int min = Integer.MAX_VALUE;
+        double min = Double.MAX_VALUE;
+
         for (int i = 0; i < maxVertices; i++) {
             if (!visitados[i] && costos[i] < min) {
                 min = costos[i];
@@ -280,17 +271,6 @@ public class Grafo {
         return posMin;
     }
 
-
-    public ILista<Ciudades> adyacentes(Ciudades ciudades) {
-        int pos = obtenerPos(ciudades);
-        ILista<Ciudades> adyacentes = new Lista<>();
-        for (int i = 0; i < conexiones.length; i++) {
-            if (conexiones[pos][i].getExiste()) {
-                adyacentes.insertar(this.ciudades[i]);
-            }
-        }
-        return adyacentes;
-    }
 
     //Metodos privados
 
@@ -321,4 +301,6 @@ public class Grafo {
         }
         return null; // No se encontró el vértice
     }
+
+
 }

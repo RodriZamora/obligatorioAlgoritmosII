@@ -19,94 +19,102 @@ public class Test10RegistrarCiudad {
 
     @Test
     void registrarCiudadOk() {
-        retorno = s.registrarCiudad("COD01", "Ciudad1");
+        retorno = s.registrarCiudad("COD01", "Montevideo");
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
 
-        retorno = s.registrarViajero("2.914.689-5", "Ana", "ana@ort.edu.uy", 26, Categoria.ESTANDAR);
-        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
     }
 
     @Test
     void registrarCiudadError1() {
         s.inicializarSistema(5);
-        s.registrarCiudad("COD01", "Ciudad1");
-        s.registrarCiudad("COD02", "Ciudad2");
-        s.registrarCiudad("COD03", "Ciudad3");
-        s.registrarCiudad("COD04", "Ciudad4");
-        s.registrarCiudad("COD05", "Ciudad5");
-        retorno = s.registrarCiudad("COD06", "Ciudad6");
+        s.registrarCiudad("COD01", "Montevideo");
+        s.registrarCiudad("COD02", "San Jose");
+        s.registrarCiudad("COD03", "Maldonado");
+        s.registrarCiudad("COD04", "Canelones");
+        s.registrarCiudad("COD05", "Colonia");
+        retorno = s.registrarCiudad("COD06", "Rocha");
         assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
-
+        assertEquals("Ya se alcanzó el máximo de ciudades registradas", retorno.getValorString());
     }
 
     @Test
     void registrarCiudadError2() {
-        retorno = s.registrarCiudad("", "Ciudad1");
+        retorno = s.registrarCiudad("", null);
         assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
+        assertEquals("Los campos no pueden ser nulos o vacios", retorno.getValorString());
 
-        retorno = s.registrarCiudad("   ", "Ciudad1");
+        retorno = s.registrarCiudad("", "Montevideo");
         assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
+        assertEquals("Los campos no pueden ser nulos o vacios", retorno.getValorString());
 
-        retorno = s.registrarCiudad(null, "Ciudad1");
+        retorno = s.registrarCiudad("   ", "Montevideo");
         assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
+        assertEquals("Los campos no pueden ser nulos o vacios", retorno.getValorString());
+
+        retorno = s.registrarCiudad(null, "Montevideo");
+        assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
+        assertEquals("Los campos no pueden ser nulos o vacios", retorno.getValorString());
 
         retorno = s.registrarCiudad("COD01", "");
         assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
+        assertEquals("Los campos no pueden ser nulos o vacios", retorno.getValorString());
 
         retorno = s.registrarCiudad("COD01", "   ");
         assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
+        assertEquals("Los campos no pueden ser nulos o vacios", retorno.getValorString());
 
         retorno = s.registrarCiudad("COD01", null);
         assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
-
+        assertEquals("Los campos no pueden ser nulos o vacios", retorno.getValorString());
     }
 
     @Test
     void registrarCiudadError3() {
-        s.registrarCiudad("COD01", "Ciudad1");
-        retorno = s.registrarCiudad("COD01", "Ciudad1");
+        s.registrarCiudad("COD01", "Montevideo");
+        retorno = s.registrarCiudad("COD01", "Paysandú");
         assertEquals(Retorno.Resultado.ERROR_3, retorno.getResultado());
-
+        assertEquals("Ya existe una ciudad registrada con ese código", retorno.getValorString());
     }
 
     @Test
     void registrarCiudadCompleto() {
 
-        retorno = s.registrarCiudad("", "Ciudad1");
+        retorno = s.registrarCiudad("", "Montevideo");
         assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
+        assertEquals("Los campos no pueden ser nulos o vacios", retorno.getValorString());
 
-        retorno = s.registrarCiudad("   ", "Ciudad1");
+        retorno = s.registrarCiudad("   ", "Montevideo");
         assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
+        assertEquals("Los campos no pueden ser nulos o vacios", retorno.getValorString());
 
-        retorno = s.registrarCiudad(null, "Ciudad1");
+        retorno = s.registrarCiudad(null, "Montevideo");
         assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
+        assertEquals("Los campos no pueden ser nulos o vacios", retorno.getValorString());
 
         retorno = s.registrarCiudad("COD01", "");
         assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
+        assertEquals("Los campos no pueden ser nulos o vacios", retorno.getValorString());
 
         retorno = s.registrarCiudad("COD01", "   ");
         assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
+        assertEquals("Los campos no pueden ser nulos o vacios", retorno.getValorString());
 
         retorno = s.registrarCiudad("COD01", null);
         assertEquals(Retorno.Resultado.ERROR_2, retorno.getResultado());
+        assertEquals("Los campos no pueden ser nulos o vacios", retorno.getValorString());
 
-        retorno = s.registrarCiudad("COD01", "Ciudad1");
+        retorno = s.registrarCiudad("COD01", "Montevideo");
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
 
-        retorno = s.registrarCiudad("COD02", "Ciudad2");
+        retorno = s.registrarCiudad("COD02", "Maldonado");
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
 
-        retorno = s.registrarCiudad("COD02", "Ciudad2");
+        retorno = s.registrarCiudad("COD02", "Maldonado");
         assertEquals(Retorno.Resultado.ERROR_3, retorno.getResultado());
+        assertEquals("Ya existe una ciudad registrada con ese código", retorno.getValorString());
 
-        for (int i = 3; i <= 15; i++) {
-            retorno = s.registrarCiudad("COD" + i, "Ciudad" + i);
-            assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        }
-
-        retorno = s.registrarCiudad("COD16", "Ciudad16");
-        assertEquals(Retorno.Resultado.ERROR_1, retorno.getResultado());
-
+        retorno = s.registrarCiudad("COD16", "New York");
+        assertEquals(Retorno.Resultado.OK, retorno.getResultado());
 
     }
 

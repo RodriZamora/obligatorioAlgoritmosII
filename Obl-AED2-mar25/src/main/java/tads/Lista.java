@@ -100,6 +100,7 @@ public class Lista<T extends Comparable<T>> implements ILista<T>, Iterable<T> {
         }
     }
 
+
     public void ordenarLexicograficamentePorCodigo() {
         if (inicio == null || inicio.getSig() == null) return;
 
@@ -108,15 +109,10 @@ public class Lista<T extends Comparable<T>> implements ILista<T>, Iterable<T> {
             huboCambios = false;
             NodoLista<T> actual = inicio;
             while (actual != null && actual.getSig() != null) {
-                // Se asume que T es Ciudades
-                Ciudades ciudad1 = (Ciudades) actual.getDato();
-                Ciudades ciudad2 = (Ciudades) actual.getSig().getDato();
-
-                if (ciudad1.getCodigoCiudad().compareTo(ciudad2.getCodigoCiudad()) > 0) {
-                    // Intercambiar los datos
-                    T temp = actual.getDato();
+                if (actual.getDato().compareTo(actual.getSig().getDato()) > 0) {
+                    T aux = actual.getDato();
                     actual.setDato(actual.getSig().getDato());
-                    actual.getSig().setDato(temp);
+                    actual.getSig().setDato(aux);
                     huboCambios = true;
                 }
                 actual = actual.getSig();
@@ -150,8 +146,6 @@ public class Lista<T extends Comparable<T>> implements ILista<T>, Iterable<T> {
 
     @Override
     public void agregarAlFinal(T elemento) {
-        // Pre: El elemento no pued ser nulo.
-        // Post: El elemento se agrega ordenado en la lista.
 
         if (esVacia() || elemento.compareTo(inicio.getDato()) < 0) {
             inicio = new NodoLista<>(elemento, inicio);

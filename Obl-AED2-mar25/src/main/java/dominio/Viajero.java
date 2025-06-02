@@ -33,44 +33,9 @@ public class Viajero implements Comparable<Viajero> {
         this.cedulaSanitizada = cedulaSanitizada;
     }
 
-    public String getCedula() {
-        return cedula;
-    }
-
-    public void setCedula(String cedula) {
-        this.cedula = cedula;
-    }
-
-    public int getCedulaSanitizada() {
-        return cedulaSanitizada;
-    }
-
-    public void setCedulaSanitizada(int cedulaSanitizada) {
-        this.cedulaSanitizada = cedulaSanitizada;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
 
     public String getCorreo() {
         return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
-    }
-
-    public int getEdad() {
-        return edad;
-    }
-
-    public void setEdad(int edad) {
-        this.edad = edad;
     }
 
     public Categoria getCategoria() {

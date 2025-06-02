@@ -86,34 +86,34 @@ public class Test14CiudadesPorCantidadEscalas {
         s.registrarVuelo("COD01", "COD02", "codigo1", 5000, 360, 1500, TipoVuelo.COMERCIAL);
         retorno = s.listadoCiudadesCantDeEscalas("COD01", 1);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals(ciudad1+ separador +ciudad2, retorno.getValorString());
+        assertEquals(ciudad1 + separador + ciudad2, retorno.getValorString());
     }
 
     @Test
     void ciudadesPorCantidadEscalasCompleto() {
-        s.registrarCiudad("COD01", "Ciudad1");
-        s.registrarCiudad("COD02", "Ciudad2");
-        s.registrarCiudad("COD03", "Ciudad3");
-        s.registrarCiudad("COD04", "Ciudad4");
-        s.registrarCiudad("COD05", "Ciudad5");
-        s.registrarCiudad("COD06", "Ciudad6");
-        s.registrarCiudad("COD07", "Ciudad7");
-        s.registrarCiudad("COD08", "Ciudad8");
-        s.registrarCiudad("COD09", "Ciudad9");
-        s.registrarCiudad("COD10", "Ciudad10");
-        s.registrarCiudad("COD11", "Ciudad11");
-        s.registrarCiudad("COD12", "Ciudad12");
-        s.registrarCiudad("COD13", "Ciudad13");
-        s.registrarCiudad("COD14", "Ciudad14");
-        s.registrarCiudad("COD15", "Ciudad15");
-        s.registrarCiudad("COD16", "Ciudad16");
-        s.registrarCiudad("COD17", "Ciudad17");
-        s.registrarCiudad("COD18", "Ciudad18");
-        s.registrarCiudad("COD19", "Ciudad19");
-        s.registrarCiudad("COD20", "Ciudad20");
-        s.registrarCiudad("COD21", "Ciudad21");
-        s.registrarCiudad("COD22", "Ciudad22");
-        s.registrarCiudad("COD23", "Ciudad23");
+        s.registrarCiudad("COD01", "Montevideo");
+        s.registrarCiudad("COD02", "New York");
+        s.registrarCiudad("COD03", "Miami");
+        s.registrarCiudad("COD04", "Houston");
+        s.registrarCiudad("COD05", "Maldonado");
+        s.registrarCiudad("COD06", "Medellin");
+        s.registrarCiudad("COD07", "Cartagena");
+        s.registrarCiudad("COD08", "New Jersey");
+        s.registrarCiudad("COD09", "Madrid");
+        s.registrarCiudad("COD10", "Mallorca");
+        s.registrarCiudad("COD11", "Barcelona");
+        s.registrarCiudad("COD12", "Buenos Aires");
+        s.registrarCiudad("COD13", "Rio de Janeiro");
+        s.registrarCiudad("COD14", "Florianopolis");
+        s.registrarCiudad("COD15", "Washington");
+        s.registrarCiudad("COD16", "Colorado Springs");
+        s.registrarCiudad("COD17", "Pensylvania");
+        s.registrarCiudad("COD18", "Los Angeles");
+        s.registrarCiudad("COD19", "California");
+        s.registrarCiudad("COD20", "San Diego");
+        s.registrarCiudad("COD21", "Bogota");
+        s.registrarCiudad("COD22", "Ciudad de Mexico");
+        s.registrarCiudad("COD23", "Ciudad de Panama");
 
         //Distancia 1
         s.registrarConexion("COD01", "COD02");
@@ -139,11 +139,11 @@ public class Test14CiudadesPorCantidadEscalas {
 
         retorno = s.listadoCiudadesCantDeEscalas("COD01", 0);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals(ciudad1, retorno.getValorString());
+        assertEquals("COD01;Montevideo", retorno.getValorString());
 
         retorno = s.listadoCiudadesCantDeEscalas("COD01", 1);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals(distancia1(), retorno.getValorString());
+        assertEquals("COD01;Montevideo|COD02;New York|COD03;Miami|COD04;Houston|COD05;Maldonado|COD06;Medellin|COD07;Cartagena|COD16;Colorado Springs|COD17;Pensylvania|COD18;Los Angeles|COD23;Ciudad de Panama", retorno.getValorString());
 
         //Distancia2
         s.registrarConexion("COD16", "COD21");
@@ -175,42 +175,37 @@ public class Test14CiudadesPorCantidadEscalas {
 
         retorno = s.listadoCiudadesCantDeEscalas("COD01", 0);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals(ciudad1, retorno.getValorString());
+        assertEquals("COD01;Montevideo", retorno.getValorString());
 
         retorno = s.listadoCiudadesCantDeEscalas("COD01", 1);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals(distancia1(), retorno.getValorString());
+        assertEquals("COD01;Montevideo|COD02;New York|COD03;Miami|COD04;Houston|COD05;Maldonado|COD06;Medellin|COD07;Cartagena|COD16;Colorado Springs|COD17;Pensylvania|COD18;Los Angeles|COD23;Ciudad de Panama", retorno.getValorString());
 
         retorno = s.listadoCiudadesCantDeEscalas("COD01", 2);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals(distancia2(), retorno.getValorString());
+        assertEquals("COD01;Montevideo|COD02;New York|COD03;Miami|COD04;Houston|COD05;Maldonado|COD06;Medellin|COD07;Cartagena|COD08;New Jersey|COD09;Madrid|COD10;Mallorca|COD11;Barcelona|COD12;Buenos Aires|COD16;Colorado Springs|COD17;Pensylvania|COD18;Los Angeles|COD19;California|COD20;San Diego|COD21;Bogota|COD23;Ciudad de Panama", retorno.getValorString());
 
         retorno = s.listadoCiudadesCantDeEscalas("COD01", 3);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals(distancia3(), retorno.getValorString());
+        assertEquals("COD01;Montevideo|COD02;New York|COD03;Miami|COD04;Houston|COD05;Maldonado|COD06;Medellin|COD07;Cartagena|COD08;New Jersey|COD09;Madrid|COD10;Mallorca|COD11;Barcelona|COD12;Buenos Aires|COD13;Rio de Janeiro|COD14;Florianopolis|COD15;Washington|COD16;Colorado Springs|COD17;Pensylvania|COD18;Los Angeles|COD19;California|COD20;San Diego|COD21;Bogota|COD22;Ciudad de Mexico|COD23;Ciudad de Panama", retorno.getValorString());
 
         retorno = s.listadoCiudadesCantDeEscalas("COD01", 5);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals(distancia3(), retorno.getValorString());
+        assertEquals("COD01;Montevideo|COD02;New York|COD03;Miami|COD04;Houston|COD05;Maldonado|COD06;Medellin|COD07;Cartagena|COD08;New Jersey|COD09;Madrid|COD10;Mallorca|COD11;Barcelona|COD12;Buenos Aires|COD13;Rio de Janeiro|COD14;Florianopolis|COD15;Washington|COD16;Colorado Springs|COD17;Pensylvania|COD18;Los Angeles|COD19;California|COD20;San Diego|COD21;Bogota|COD22;Ciudad de Mexico|COD23;Ciudad de Panama", retorno.getValorString());
 
-        s.registrarCiudad("COD24", "Ciudad24");
-        s.registrarCiudad("COD25", "Ciudad25");
+        s.registrarCiudad("COD24", "Colonia");
+        s.registrarCiudad("COD25", "Caracas");
         s.registrarConexion("COD24", "COD25");
         s.registrarVuelo("COD24", "COD25", "codigo", 5000, 360, 1500, TipoVuelo.COMERCIAL);
 
         retorno = s.listadoCiudadesCantDeEscalas("COD01", 5);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals(distancia3(), retorno.getValorString());
+        System.out.println(retorno.getValorString());
+        assertEquals("COD01;Montevideo|COD02;New York|COD03;Miami|COD04;Houston|COD05;Maldonado|COD06;Medellin|COD07;Cartagena|COD08;New Jersey|COD09;Madrid|COD10;Mallorca|COD11;Barcelona|COD12;Buenos Aires|COD13;Rio de Janeiro|COD14;Florianopolis|COD15;Washington|COD16;Colorado Springs|COD17;Pensylvania|COD18;Los Angeles|COD19;California|COD20;San Diego|COD21;Bogota|COD22;Ciudad de Mexico|COD23;Ciudad de Panama", retorno.getValorString());
 
         retorno = s.listadoCiudadesCantDeEscalas("COD02", 5);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        assertEquals(ciudad2+separador+ciudad8+separador+ciudad9+separador+ciudad13+separador+ciudad14, retorno.getValorString());
-
+        assertEquals("COD02;New York|COD08;New Jersey|COD09;Madrid|COD13;Rio de Janeiro|COD14;Florianopolis", retorno.getValorString());
     }
-
-
-
-
-
 
 }

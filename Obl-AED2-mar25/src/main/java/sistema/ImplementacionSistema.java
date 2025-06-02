@@ -8,6 +8,9 @@ import grafo.Ciudades;
 import interfaz.*;
 import tads.Lista;
 
+//Nombres y numeros de estudiantes del equipo:
+//Alejandro Garcia 266470
+//Rodrigo Zamora 318548
 
 public class ImplementacionSistema implements Sistema {
 
@@ -38,14 +41,13 @@ public class ImplementacionSistema implements Sistema {
         this.viajerosEstandar = new ABB<>();
         this.viajerosFrecuentes = new ABB<>();
         this.viajerosPlatinos = new ABB<>();
-        this.sistemaInicializado = true;
+
 
         for (int i = 0; i < 14; i++) {
             viajerosPorRango[i] = new ABB<>();
         }
-
         this.grafo = new Grafo(maxCiudades, true);
-
+        this.sistemaInicializado = true;
         return Retorno.ok();
     }
 
@@ -308,12 +310,49 @@ public class ImplementacionSistema implements Sistema {
 
     @Override
     public Retorno viajeCostoMinimoMinutos(String codigoCiudadOrigen, String codigoCiudadDestino, TipoVueloPermitido tipoVueloPermitido) {
-        return Retorno.noImplementada();
+        if (codigoCiudadOrigen == null || codigoCiudadDestino == null || codigoCiudadOrigen.trim().isEmpty() || codigoCiudadDestino.trim().isEmpty() || tipoVueloPermitido == null) {
+            return Retorno.error1("Los codigos de las ciudades y el tipo de vuelo no pueden ser nulos o vacios");
+        }
+        if (!existeCiudad(codigoCiudadOrigen)) {
+            return Retorno.error2("No existe la ciudad de origen");
+        }
+        if (!existeCiudad(codigoCiudadDestino)) {
+            return Retorno.error3("No existe la ciudad de destino");
+        }
+        Ciudades ciudadOrigen = grafo.obtenerCiudad(codigoCiudadOrigen);
+        Ciudades ciudadDestino = grafo.obtenerCiudad(codigoCiudadDestino);
+
+        double[] costo = new double[1];
+        String camino = grafo.dijkstraConDestinoYCosto(ciudadOrigen, ciudadDestino, tipoVueloPermitido, costo);
+
+        if (camino == null || camino.isEmpty()) {
+            return Retorno.error4("No existe un camino entre las ciudades especificadas");
+        }
+
+        return Retorno.ok((int) costo[0], camino);
     }
 
     @Override
     public Retorno viajeCostoMinimoDolares(String codigoCiudadOrigen, String codigoCiudadDestino, TipoVueloPermitido tipoVueloPermitido) {
-        return Retorno.noImplementada();
+        if (codigoCiudadOrigen == null || codigoCiudadDestino == null || codigoCiudadOrigen.trim().isEmpty() || codigoCiudadDestino.trim().isEmpty() || tipoVueloPermitido == null) {
+            return Retorno.error1("Los codigos de las ciudades y el tipo de vuelo no pueden ser nulos o vacios");
+        }
+        if (!existeCiudad(codigoCiudadOrigen)) {
+            return Retorno.error2("No existe la ciudad de origen");
+        }
+        if (!existeCiudad(codigoCiudadDestino)) {
+            return Retorno.error3("No existe la ciudad de destino");
+        }
+        Ciudades ciudadOrigen = grafo.obtenerCiudad(codigoCiudadOrigen);
+        Ciudades ciudadDestino = grafo.obtenerCiudad(codigoCiudadDestino);
+
+        double[] costo = new double[1];
+        String camino = grafo.dijkstraCostoDolares(ciudadOrigen, ciudadDestino, tipoVueloPermitido, costo);
+        if (camino == null || camino.isEmpty()) {
+            return Retorno.error4("No existe un camino entre las ciudades especificadas");
+        }
+
+        return Retorno.ok((int) costo[0], camino);
     }
 
 
@@ -392,7 +431,7 @@ public class ImplementacionSistema implements Sistema {
         for (int i = 0; i < ciudadesAlcanzables.largo(); i++) {
             Ciudades ciudad = ciudadesAlcanzables.recuperar(i);
             if (ciudad != null) {
-                resultado.append(ciudad.toString());
+                resultado.append(ciudad);
                 if (i < ciudadesAlcanzables.largo() - 1) {
                     resultado.append("|");
                 }

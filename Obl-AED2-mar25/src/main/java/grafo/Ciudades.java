@@ -19,17 +19,11 @@ public class Ciudades implements Comparable<Ciudades> {
         return codigoCiudad;
     }
 
-    public void setCodigoCiudad(String codigoCiudad) {
-        this.codigoCiudad = codigoCiudad;
-    }
 
     public String getNombreCiudad() {
         return nombreCiudad;
     }
 
-    public void setNombreCiudad(String nombreCiudad) {
-        this.nombreCiudad = nombreCiudad;
-    }
 
     @Override
     public boolean equals(Object o) {

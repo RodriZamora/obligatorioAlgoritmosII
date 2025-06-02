@@ -24,33 +24,11 @@ public class Vuelo implements Comparable<Vuelo> {
         this.tipoDeVuelo = tipoDeVuelo;
     }
 
-    public String getCodigoCiudadOrigen() {
-        return codigoCiudadOrigen;
-    }
-
-    public void setCodigoCiudadOrigen(String codigoCiudadOrigen) {
-        this.codigoCiudadOrigen = codigoCiudadOrigen;
-    }
-
-    public String getCodigoCiudadDestino() {
-        return codigoCiudadDestino;
-    }
-
-    public void setCodigoCiudadDestino(String codigoCiudadDestino) {
-        this.codigoCiudadDestino = codigoCiudadDestino;
-    }
 
     public String getCodigoDeVuelo() {
         return codigoDeVuelo;
     }
 
-    public void setCodigoDeVuelo(String codigoDeVuelo) {
-        this.codigoDeVuelo = codigoDeVuelo;
-    }
-
-    public Double getCombustible() {
-        return combustible;
-    }
 
     public void setCombustible(Double combustible) {
         this.combustible = combustible;
@@ -96,4 +74,5 @@ public class Vuelo implements Comparable<Vuelo> {
     public int compareTo(Vuelo o) {
         return this.codigoDeVuelo.compareTo(o.codigoDeVuelo);
     }
+
 }
