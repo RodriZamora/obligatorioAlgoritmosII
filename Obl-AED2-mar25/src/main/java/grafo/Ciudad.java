@@ -2,16 +2,16 @@ package grafo;
 
 import java.util.Objects;
 
-public class Ciudades implements Comparable<Ciudades> {
+public class Ciudad implements Comparable<Ciudad> {
     private String codigoCiudad;
     private String nombreCiudad;
 
-    public Ciudades(String codigoCiudad, String nombreCiudad) {
+    public Ciudad(String codigoCiudad, String nombreCiudad) {
         this.codigoCiudad = codigoCiudad;
         this.nombreCiudad = nombreCiudad;
     }
 
-    public Ciudades(String codigoCiudad) {
+    public Ciudad(String codigoCiudad) {
         this.codigoCiudad = codigoCiudad;
     }
 
@@ -28,8 +28,8 @@ public class Ciudades implements Comparable<Ciudades> {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        Ciudades ciudades = (Ciudades) o;
-        return Objects.equals(codigoCiudad, ciudades.codigoCiudad);
+        Ciudad ciudad = (Ciudad) o;
+        return Objects.equals(codigoCiudad, ciudad.codigoCiudad);
     }
 
     @Override
@@ -43,9 +43,9 @@ public class Ciudades implements Comparable<Ciudades> {
     }
 
     @Override
-    public int compareTo(Ciudades o) {
+    public int compareTo(Ciudad o) {
         if (o == null || getClass() != o.getClass()) return 0;
-        Ciudades otraCiudad = (Ciudades) o;
+        Ciudad otraCiudad = (Ciudad) o;
         return this.getCodigoCiudad().compareTo(otraCiudad.getCodigoCiudad());
     }
 }

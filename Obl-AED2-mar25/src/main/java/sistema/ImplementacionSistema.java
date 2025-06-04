@@ -4,7 +4,7 @@ import abb.ABB;
 import dominio.*;
 import grafo.Conexion;
 import grafo.Grafo;
-import grafo.Ciudades;
+import grafo.Ciudad;
 import interfaz.*;
 import tads.Lista;
 
@@ -191,8 +191,7 @@ public class ImplementacionSistema implements Sistema {
         }
 
         Ciudad ciudad = new Ciudad(codigo, nombre);
-        Ciudades ciudades = new Ciudades(ciudad.getCodigo(), ciudad.getNombre());
-        this.grafo.agregarVertice(ciudades);
+        this.grafo.agregarVertice(ciudad);
         return Retorno.ok();
     }
 
@@ -210,8 +209,8 @@ public class ImplementacionSistema implements Sistema {
             return Retorno.error3("No existe la ciudad de destino");
         }
 
-        Ciudades cOrigen = new Ciudades(codigoCiudadOrigen);
-        Ciudades cDestino = new Ciudades(codigoCiudadDestino);
+        Ciudad cOrigen = new Ciudad(codigoCiudadOrigen);
+        Ciudad cDestino = new Ciudad(codigoCiudadDestino);
 
         if (grafo.existeArista(cOrigen, cDestino)) {
             return Retorno.error4("Ya existe una conexion entre esas ciudades");
@@ -235,8 +234,8 @@ public class ImplementacionSistema implements Sistema {
         if (!existeCiudad(codigoCiudadDestino)) {
             return Retorno.error4("No existe la ciudad de destino");
         }
-        Ciudades cOrigen = new Ciudades(codigoCiudadOrigen);
-        Ciudades cDestino = new Ciudades(codigoCiudadDestino);
+        Ciudad cOrigen = new Ciudad(codigoCiudadOrigen);
+        Ciudad cDestino = new Ciudad(codigoCiudadDestino);
 
         if (!grafo.existeArista(cOrigen, cDestino)) {
             return Retorno.error5("No existe una conexion entre esas ciudades");
@@ -268,8 +267,8 @@ public class ImplementacionSistema implements Sistema {
         if (!existeCiudad(codigoCiudadDestino)) {
             return Retorno.error4("No existe la ciudad de destino");
         }
-        Ciudades cOrigen = new Ciudades(codigoCiudadOrigen);
-        Ciudades cDestino = new Ciudades(codigoCiudadDestino);
+        Ciudad cOrigen = new Ciudad(codigoCiudadOrigen);
+        Ciudad cDestino = new Ciudad(codigoCiudadDestino);
         if (!grafo.existeArista(cOrigen, cDestino)) {
             return Retorno.error5("No existe una conexion entre esas ciudades");
         }
@@ -296,11 +295,11 @@ public class ImplementacionSistema implements Sistema {
         if (!existeCiudad(codigoCiudadOrigen)) {
             return Retorno.error3("No existe la ciudad de origen");
         }
-        Ciudades ciudadOrigen = grafo.obtenerCiudad(codigoCiudadOrigen);
+        Ciudad ciudadOrigen = grafo.obtenerCiudad(codigoCiudadOrigen);
 
         /*String resultado = grafo.bfsConEscalas(ciudadOrigen, cantidad);
         return Retorno.ok(resultado);*/
-        Lista<Ciudades> ciudadesAlcanzables = grafo.bfsConEscalas(ciudadOrigen, cantidad);
+        Lista<Ciudad> ciudadesAlcanzables = grafo.bfsConEscalas(ciudadOrigen, cantidad);
         ciudadesAlcanzables.ordenarLexicograficamentePorCodigo();
         String resultado = formatearCiudades(ciudadesAlcanzables);
 
@@ -319,8 +318,8 @@ public class ImplementacionSistema implements Sistema {
         if (!existeCiudad(codigoCiudadDestino)) {
             return Retorno.error3("No existe la ciudad de destino");
         }
-        Ciudades ciudadOrigen = grafo.obtenerCiudad(codigoCiudadOrigen);
-        Ciudades ciudadDestino = grafo.obtenerCiudad(codigoCiudadDestino);
+        Ciudad ciudadOrigen = grafo.obtenerCiudad(codigoCiudadOrigen);
+        Ciudad ciudadDestino = grafo.obtenerCiudad(codigoCiudadDestino);
 
         double[] costo = new double[1];
         String camino = grafo.dijkstraConDestinoYCosto(ciudadOrigen, ciudadDestino, tipoVueloPermitido, costo);
@@ -343,8 +342,8 @@ public class ImplementacionSistema implements Sistema {
         if (!existeCiudad(codigoCiudadDestino)) {
             return Retorno.error3("No existe la ciudad de destino");
         }
-        Ciudades ciudadOrigen = grafo.obtenerCiudad(codigoCiudadOrigen);
-        Ciudades ciudadDestino = grafo.obtenerCiudad(codigoCiudadDestino);
+        Ciudad ciudadOrigen = grafo.obtenerCiudad(codigoCiudadOrigen);
+        Ciudad ciudadDestino = grafo.obtenerCiudad(codigoCiudadDestino);
 
         double[] costo = new double[1];
         String camino = grafo.dijkstraCostoDolares(ciudadOrigen, ciudadDestino, tipoVueloPermitido, costo);
@@ -410,7 +409,7 @@ public class ImplementacionSistema implements Sistema {
     }
 
     private boolean existeCiudad(String codigo) {
-        Ciudades v = new Ciudades(codigo);
+        Ciudad v = new Ciudad(codigo);
         return grafo.existe(v);
     }
 
@@ -418,18 +417,18 @@ public class ImplementacionSistema implements Sistema {
         return conexion.existeVuelo(codigoDeVuelo);
     }
 
-    private Ciudades obtenerCiudad(String codigoCiudadOrigen) {
-        Ciudades ciudadOrigen = new Ciudades(codigoCiudadOrigen);
+    private Ciudad obtenerCiudad(String codigoCiudadOrigen) {
+        Ciudad ciudadOrigen = new Ciudad(codigoCiudadOrigen);
         if (!grafo.existe(ciudadOrigen)) {
             return null;
         }
         return ciudadOrigen;
     }
 
-    private String formatearCiudades(Lista<Ciudades> ciudadesAlcanzables) {
+    private String formatearCiudades(Lista<Ciudad> ciudadesAlcanzables) {
         StringBuilder resultado = new StringBuilder();
         for (int i = 0; i < ciudadesAlcanzables.largo(); i++) {
-            Ciudades ciudad = ciudadesAlcanzables.recuperar(i);
+            Ciudad ciudad = ciudadesAlcanzables.recuperar(i);
             if (ciudad != null) {
                 resultado.append(ciudad);
                 if (i < ciudadesAlcanzables.largo() - 1) {

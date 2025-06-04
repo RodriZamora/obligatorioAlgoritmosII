@@ -1,9 +1,6 @@
 package tads;
 
 
-import grafo.Ciudades;
-
-import java.util.Comparator;
 import java.util.Iterator;
 
 public class Lista<T extends Comparable<T>> implements ILista<T>, Iterable<T> {

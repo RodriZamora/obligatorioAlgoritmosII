@@ -1,17 +1,13 @@
 package grafo;
 
-import dominio.Ciudad;
 import dominio.Vuelo;
-import interfaz.TipoVuelo;
 import interfaz.TipoVueloPermitido;
 import tads.Cola;
-import tads.ICola;
-import tads.ILista;
 import tads.Lista;
 
 public class Grafo {
     private Conexion[][] conexiones;
-    private Ciudades[] ciudades;
+    private Ciudad[] ciudades;
     private int cantVertices;
     private final int maxVertices;
     private final boolean dirigido;
@@ -19,7 +15,7 @@ public class Grafo {
 
     public Grafo(int cantMaxVertices, boolean esDirigido) {
         cantVertices = 0;
-        ciudades = new Ciudades[cantMaxVertices];
+        ciudades = new Ciudad[cantMaxVertices];
         conexiones = new Conexion[cantMaxVertices][cantMaxVertices];
         if (esDirigido) {
             for (int i = 0; i < conexiones.length; i++) {
@@ -40,7 +36,7 @@ public class Grafo {
         dirigido = esDirigido;
     }
 
-    public void agregarVertice(Ciudades ciudades) {
+    public void agregarVertice(Ciudad ciudades) {
 
         if (cantVertices < maxVertices) {
             int posLibre = obtenerPosLibre();
@@ -50,7 +46,7 @@ public class Grafo {
     }
 
 
-    public boolean existe(Ciudades v) {
+    public boolean existe(Ciudad v) {
         for (int i = 0; i < ciudades.length; i++) {
             if (ciudades[i] != null && ciudades[i].equals(v)) {
                 return true;
@@ -63,21 +59,21 @@ public class Grafo {
         return cantVertices;
     }
 
-    public void agregarConexion(Ciudades vInicio, Ciudades vFinal, Conexion conexion) {
+    public void agregarConexion(Ciudad vInicio, Ciudad vFinal, Conexion conexion) {
         int posVinicial = obtenerPos(vInicio);
         int posVfinal = obtenerPos(vFinal);
         Conexion a = conexiones[posVinicial][posVfinal];
         a.setExiste(true);
     }
 
-    public Conexion obtenerArista(Ciudades vInicio, Ciudades vFinal) {
+    public Conexion obtenerArista(Ciudad vInicio, Ciudad vFinal) {
         int posVinicial = obtenerPos(vInicio);
         int posVfinal = obtenerPos(vFinal);
         return conexiones[posVinicial][posVfinal];
     }
 
 
-    public Boolean existeArista(Ciudades vInicio, Ciudades vFinal) {
+    public Boolean existeArista(Ciudad vInicio, Ciudad vFinal) {
         int posVinicial = obtenerPos(vInicio);
         int posVfinal = obtenerPos(vFinal);
         return conexiones[posVinicial][posVfinal].getExiste();
@@ -86,12 +82,12 @@ public class Grafo {
 
     /// /////RECORRIDAS ////////////
 
-    public Lista<Ciudades> bfsConEscalas(Ciudades c, int cant) {
+    public Lista<Ciudad> bfsConEscalas(Ciudad c, int cant) {
         int posV = obtenerPos(c);
         boolean[] visitados = new boolean[maxVertices];
         int[] niveles = new int[maxVertices];
         Cola<Integer> cola = new Cola<>();
-        Lista<Ciudades> result = new Lista<>();
+        Lista<Ciudad> result = new Lista<>();
 
         visitados[posV] = true;
         niveles[posV] = 0;
@@ -124,7 +120,7 @@ public class Grafo {
     }
 
 
-    public String dijkstraConDestinoYCosto(Ciudades vOrigen, Ciudades vDestino, TipoVueloPermitido tipoVueloPermitido, double[] costoTotal) {
+    public String dijkstraConDestinoYCosto(Ciudad vOrigen, Ciudad vDestino, TipoVueloPermitido tipoVueloPermitido, double[] costoTotal) {
         int posOrigen = obtenerPos(vOrigen);
         int posDestino = obtenerPos(vDestino);
 
@@ -191,7 +187,7 @@ public class Grafo {
     }
 
 
-    public String dijkstraCostoDolares(Ciudades ciudadOrigen, Ciudades ciudadDestino, TipoVueloPermitido
+    public String dijkstraCostoDolares(Ciudad ciudadOrigen, Ciudad ciudadDestino, TipoVueloPermitido
             tipoVueloPermitido, double[] costoTotal) {
         int posOrigen = obtenerPos(ciudadOrigen);
         int posDestino = obtenerPos(ciudadDestino);
@@ -283,7 +279,7 @@ public class Grafo {
         return -1; // No hay espacio libre
     }
 
-    private int obtenerPos(Ciudades v) {
+    private int obtenerPos(Ciudad v) {
         for (int i = 0; i < ciudades.length; i++) {
             if (ciudades[i] != null && ciudades[i].equals(v)) {
                 return i;
@@ -293,7 +289,7 @@ public class Grafo {
     }
 
 
-    public Ciudades obtenerCiudad(String codigoCiudadOrigen) {
+    public Ciudad obtenerCiudad(String codigoCiudadOrigen) {
         for (int i = 0; i < ciudades.length; i++) {
             if (ciudades[i] != null && ciudades[i].getCodigoCiudad().equals(codigoCiudadOrigen)) {
                 return ciudades[i];

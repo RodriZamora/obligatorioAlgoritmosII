@@ -200,7 +200,6 @@ public class Test14CiudadesPorCantidadEscalas {
 
         retorno = s.listadoCiudadesCantDeEscalas("COD01", 5);
         assertEquals(Retorno.Resultado.OK, retorno.getResultado());
-        System.out.println(retorno.getValorString());
         assertEquals("COD01;Montevideo|COD02;New York|COD03;Miami|COD04;Houston|COD05;Maldonado|COD06;Medellin|COD07;Cartagena|COD08;New Jersey|COD09;Madrid|COD10;Mallorca|COD11;Barcelona|COD12;Buenos Aires|COD13;Rio de Janeiro|COD14;Florianopolis|COD15;Washington|COD16;Colorado Springs|COD17;Pensylvania|COD18;Los Angeles|COD19;California|COD20;San Diego|COD21;Bogota|COD22;Ciudad de Mexico|COD23;Ciudad de Panama", retorno.getValorString());
 
         retorno = s.listadoCiudadesCantDeEscalas("COD02", 5);
