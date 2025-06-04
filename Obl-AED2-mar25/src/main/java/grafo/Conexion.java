@@ -6,7 +6,6 @@ import tads.Lista;
 
 public class Conexion {
     private Boolean existe;
-    private int ponderacion;
     private Lista<Vuelo> vuelos;
 
     public Conexion() {
